@@ -1,0 +1,8 @@
+10x6
+construct 255 255 255
+chemin 0 255 0
+noeud 255 0 0
+in 255 0 255
+out 255 255 0
+
+convert map01.jpg -compress none map01.ppm
