@@ -20,7 +20,7 @@ all : $(OBJ)
 	@echo "            to execute type: $(BIN) &"
 	@echo "--------------------------------------------------------------"
 
-$(OBJDIR)main.o : $(SRCDIR)main.c $(SRCDIR)controller.c $(INCLUDEDIR)controller.h
+$(OBJDIR)main.o : $(SRCDIR)main.c $(SRCDIR)controller.c $(INCLUDEDIR)controller.h $(SRCDIR)map.c $(INCLUDEDIR)map.h
 	@echo "compile main"
 	mkdir -p `dirname $@`
 	$(CC) -o $@ -c $< $(CFLAGS)
@@ -31,6 +31,13 @@ $(OBJDIR)controller.o : $(SRCDIR)controller.c $(INCLUDEDIR)controller.h
 	mkdir -p `dirname $@`
 	$(CC) -o $@ -c $< $(CFLAGS)
 	@echo "done..."
+
+$(OBJDIR)map.o : $(SRCDIR)map.c $(INCLUDEDIR)map.h
+	@echo "compile map"
+	mkdir -p `dirname $@`
+	$(CC) -o $@ -c $< $(CFLAGS)
+	@echo "done..."
+
 
 clean :	
 	@echo "**************************"
