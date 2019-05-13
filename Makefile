@@ -38,6 +38,13 @@ $(OBJDIR)controller.o : $(SRCDIR)controller.c $(INCLUDEDIR)controller.h
 	$(CC) -o $@ -c $< $(CFLAGS)
 	@echo "done..."
 
+$(OBJDIR)map.o : $(SRCDIR)map.c $(INCLUDEDIR)map.h
+	@echo "compile map"
+	mkdir -p `dirname $@`
+	$(CC) -o $@ -c $< $(CFLAGS)
+	@echo "done..."
+
+
 clean :	
 	@echo "**************************"
 	@echo "CLEAN"
