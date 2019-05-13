@@ -2,7 +2,7 @@
 #define CONTROLLER_H__
 
 /// \enumeration
-typedef enum {red, green, blue, all} exColours;
+typedef enum {enum1, enum2, enum3, enum4} exEnums;
 
 /// \structure
 typedef struct exStruct{
