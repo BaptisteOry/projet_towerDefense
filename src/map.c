@@ -4,8 +4,18 @@
 #include "../include/mapVerif.h"
 
 void itdCheck(char* itdFile) {
-	FILE *file;
 
+	// ITD file elements
+	char code[5];
+	int version;
+	char comments[50];
+	char keyword[10];
+	int valueR, valueG, valueB;
+	char ppmFileName[10];
+	int nodesNumber;
+
+	// Open .itd file
+	FILE *file;
 	file = fopen(itdFile, "r"); // read mode
  
 	if (file == NULL) {
@@ -13,16 +23,49 @@ void itdCheck(char* itdFile) {
 	  	return EXIT_FAILURE;
 	}
 
-/*	char data; 
-	fscanf(file, "%s", data&);
-	printf("%s\n", data);
-	if(data != "@ITD 1") {
-		printf("ERROR : Wrong .itd file format.\n", );
-	}*/
+	/* FILE CHECK */
+
+	// itd code check
+	fscanf(file, "%s %d", code, &version);
+	printf("%s\n", code);
+	if(code != "@ITD") {
+		printf("ERROR : Wrong .itd file format.\n");
+		EXIT_FAILURE;
+	}
+	if(version != 1) {
+		printf("Itd version not supported.\n");
+		EXIT_FAILURE;
+	}
+
+	// Read comment
+	fgets(comments, sizeof comments, file);
+	if(comments[0] != #) {
+		printf("Second line isn't comments.")
+		EXIT_FAILURE
+	}
+	fputs(comments, stdout);
+
+	// Read variables & values
+
+	// Store variables & values
+
+	// Read nodes description
+
+	// Store nodes descrition by creating the graph
+
+
+	/* PPM MAP CHECK */
+
+
  
+ 	// Close .itd file
 	fclose(file);
 }
 
-void mapCheck(ImageMap map, char* itdFile) {
+void mapCheck(ImageMap map, char* itdFile, ItsEltsInfos* infos) {
 	
 }
+
+/*void createGraph(Graph* graph) {
+
+}*/
