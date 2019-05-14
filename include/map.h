@@ -21,6 +21,7 @@ typedef struct Graph {
 typedef struct ItdEltsInfos {
 	char keyword[10];
 	int r, g, b;
+	ItdEltsInfos* nextKeyword;
 } ItdEltsInfos;
 
 

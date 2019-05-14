@@ -72,3 +72,10 @@ int loadImageMapPPM(ImageMap *imageMap, char *filename){
 
   return EXIT_SUCCESS;
 }
+
+int testPixel(int pixel) {
+  if(pixel>=0 && pixel<=255) {
+    return 0;
+  }
+  return 1;
+}

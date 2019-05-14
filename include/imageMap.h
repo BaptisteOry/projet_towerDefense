@@ -28,4 +28,6 @@ void freeImageMap(ImageMap *imageMap);
 /// \return EXIT_FAILURE in case of problem, else EXIT_SUCCESS
 int loadImageMapPPM(ImageMap *imageMap, char *filename);
 
+int testPixel(int pixel);
+
 #endif
