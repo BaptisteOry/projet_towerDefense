@@ -7,7 +7,7 @@ SRCDIR	= src/
 INCLUDEDIR	= include/
 OBJDIR	= obj/
 BIN    = $(BINDIR)towerdef.itd
-OBJ    = $(OBJDIR)main.o
+OBJ    = $(OBJDIR)main.o $(OBJDIR)imageMap.o $(OBJDIR)controller.o
 
 RM     = rm -f
 DIRNAME = $(shell basename $$PWD)
@@ -20,8 +20,14 @@ all : $(OBJ)
 	@echo "            to execute type: $(BIN) &"
 	@echo "--------------------------------------------------------------"
 
-$(OBJDIR)main.o : $(SRCDIR)main.c $(SRCDIR)controller.c $(INCLUDEDIR)controller.h $(SRCDIR)map.c $(INCLUDEDIR)map.h
+$(OBJDIR)main.o : $(SRCDIR)main.c $(SRCDIR)imageMap.c $(INCLUDEDIR)imageMap.h $(SRCDIR)controller.c $(INCLUDEDIR)controller.h $(SRCDIR)map.c $(INCLUDEDIR)map.h
 	@echo "compile main"
+	mkdir -p `dirname $@`
+	$(CC) -o $@ -c $< $(CFLAGS)
+	@echo "done..."
+
+$(OBJDIR)imageMap.o : $(SRCDIR)imageMap.c $(INCLUDEDIR)imageMap.h
+	@echo "compile controller"
 	mkdir -p `dirname $@`
 	$(CC) -o $@ -c $< $(CFLAGS)
 	@echo "done..."
