@@ -2,9 +2,9 @@
 #include <stdlib.h>
 
 #include "../include/map.h"
-#include "../include/ImageMap.h"
+#include "../include/imageMap.h"
 
-void itdCheck(char* itdFile, ImageMap* map, ItsEltsInfos* infos, Graph* graph) {
+void itdCheck(char* itdFile, ImageMap* map, ItdEltsInfos* infos, Graph* graph) {
 
 	// ITD file elements
 	char code[5];
@@ -50,8 +50,8 @@ void itdCheck(char* itdFile, ImageMap* map, ItsEltsInfos* infos, Graph* graph) {
 
 	// Read comment
 	fgets(comments, sizeof comments, file);
-	if(comments[0] != #) {
-		printf("Second line isn't comments.")
+	if(comments[0] != "#") {
+		printf("Second line isn't comments.");
 		EXIT_FAILURE
 	}
 	fputs(comments, stdout);
@@ -96,7 +96,7 @@ void itdCheck(char* itdFile, ImageMap* map, ItsEltsInfos* infos, Graph* graph) {
 
 	while(!foef(file)) {
 		// Create nodes
-		nodeCount++;
+		nodesCount++;
 		fscanf(file, "%d %d %d %d", &nodeId, &nodeType, &nodeX, &nodeY);
 		nodes->id = nodeId;
 		nodes->nodeType = nodeType;
@@ -106,8 +106,9 @@ void itdCheck(char* itdFile, ImageMap* map, ItsEltsInfos* infos, Graph* graph) {
 			// Create links
 			fscanf(file, "%d", nodeLink);
 			links->id1 = nodes->id;
-			links->id2 = nodeLink
+			links->id2 = nodeLink;
 			links = links->nextLink;
+			i++;
 		}
 		nodes=nodes->nextNode;
 
@@ -127,37 +128,65 @@ void itdCheck(char* itdFile, ImageMap* map, ItsEltsInfos* infos, Graph* graph) {
 	fclose(file);
 }
 
-void mapCheck(ImageMap* map, ItsEltsInfos* infos, Graph* graph) {
-	ItsEltsInfos* tempInfo = infos;
+void mapCheck(ImageMap* map, ItdEltsInfos* infos, Graph* graph) {
+	ItdEltsInfos* tempInfo = infos;
 	Node* tempNode = graph->nodes;
 	Link* tempLink = graph->links;
 	int x = 0;
 	int y = 0;
-	while(y < map->height && x < map->width) {
-		while(x< map->width) {
 
+	// Check all nodes
+	while(tempNode != NULL) {
+		if(tempNode->type = 1) {
+			while(tempInfo->keyword != "in") {
+				tempInfo=tempInfo->nextInfo;
+			}
+			testNodeOnMap(tempInfo->r, tempInfo->g, tempInfo->b, tempNode, map);
+			tempInfo = infos;
+		}
+		else if(tempNode->type = 2) {
+			while(tempInfo->keyword != "out") {
+				tempInfo=tempInfo->nextInfo;
+			}
+			testNodeOnMap(tempInfo->r, tempInfo->g, tempInfo->b, tempNode, map);
+			tempInfo = infos;
+		}
+		else if(tempNode->type = 3 || tempNode->type = 4) {
+			while(tempInfo->keyword != "node") {
+				tempInfo=tempInfo->nextInfo;
+			}
+			testNodeOnMap(tempInfo->r, tempInfo->g, tempInfo->b, tempNode, map);
+			tempInfo = infos;
 		}
 	}
+
+	// Check other pixels
+	while(tempInfo->keyword != "construct") {
+		tempInfo = tempInfo->nextInfo;
+	}
+	int r = tempInfo->r;
+	int g = tempInfo->g;
+	int b = tempInfo->b;
+
+	for(int i = 0; i<(map->height)*(map->width); i=i+3) {
+		int R = map->data[i];
+		int G = map->data[i+1];
+		int B = map->data[i+2];
+		if(R != r || G != g || B != b) {
+			printf("ERROR : ");
+		}
+	}
+
 }
 
 
-void testConstruct(int r, int g, int b, int x, int y, Graph* graph) {
-
-}
-
-void testPath(int r, int g, int b, int x, int y, Graph* graph) {
-
-}
-
-void testNode(int r, int g, int b, int x, int y, Graph* graph) {
-
-}
-
-void testIn(int r, int g, int b, int x, int y, Graph* graph) {
-
-}
-
-void testOut(int r, int g, int b, int x, int y, Graph* graph) {
+void testNodeOnMap(int r, int g, int b, Node* node, ImageMap* map) {
+	int x = node->x;
+	int y = node->y;
+	if((map->data)[y*map->width + x*3] != r, (map->data)[y*map->width + x*3 +1] != g, (map->data)[y*map->width + x*3 +2] != b) {
+		printf("ERROR : %d node not in wright place.\n", node->id);
+		EXIT_FAILURE;
+	}
 
 }
 

@@ -10,6 +10,7 @@
 
 #include "../include/controller.h"
 #include "../include/imageMap.h"
+#include "../include/map.h"
 
 // Dimensions initiales et titre de la fenetre
 static const unsigned int WINDOW_WIDTH = 600;
