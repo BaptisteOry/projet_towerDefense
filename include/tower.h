@@ -19,4 +19,10 @@ typedef struct Tower {
 	struct Tower *next; // Tour suivante
 } Tower, *TowerList;
 
+Tower* allocTower(towerType type, float x, float y);
+void addTower(Tower* t, TowerList* list);
+void deleteTowers(TowerList* list);
+void drawTowers(TowerList list);
+void drawTower(Tower* t);
+
 #endif

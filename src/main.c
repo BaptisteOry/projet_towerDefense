@@ -8,21 +8,25 @@
 #include <math.h>
 #include <time.h>
 
+#include "../include/tower.h"
 #include "../include/controller.h"
 #include "../include/imageMap.h"
 #include "../include/map.h"
 
 // Dimensions initiales et titre de la fenetre
-static const unsigned int WINDOW_WIDTH = 600;
+static const unsigned int WINDOW_WIDTH = 1000;
 static const unsigned int WINDOW_HEIGHT = 600;
 static const char WINDOW_TITLE[] = "Tower defense";
 // Espace fenetre virtuelle
-static const float GL_VIEW_WIDTH = 150.;
+static const float GL_VIEW_WIDTH = 250.;
 static const float GL_VIEW_HEIGHT = 150.;
 // Nombre de bits par pixel de la fenetre
 static const unsigned int BIT_PER_PIXEL = 32;
 // Nombre minimal de millisecondes separant le rendu de deux images
 static const Uint32 FRAMERATE_MILLISECONDS = 1000 / 60;
+
+// Tours à afficher
+static TowerList towers = NULL;
 
 void reshape(SDL_Surface** surface, unsigned int width, unsigned int height)
 {
@@ -41,35 +45,8 @@ void reshape(SDL_Surface** surface, unsigned int width, unsigned int height)
     glViewport(0, 0, (*surface)->w, (*surface)->h);
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-    gluOrtho2D(
-        -GL_VIEW_WIDTH / 2, GL_VIEW_WIDTH / 2, 
-        -GL_VIEW_HEIGHT / 2, GL_VIEW_HEIGHT / 2);
+    gluOrtho2D(-GL_VIEW_WIDTH, GL_VIEW_WIDTH, -GL_VIEW_HEIGHT, GL_VIEW_HEIGHT);
 }
-
-/* Objets canoniques */
-void drawSquare(int filled, int r, int g, int b) 
-{
-    float radio = 0.5;
-    if(filled) 
-    {
-        glBegin(GL_TRIANGLE_FAN);
-        glColor3ub(r, g, b);
-        glVertex2f(0.0, 0.0);
-    }
-    else 
-    {
-        glBegin(GL_LINE_STRIP);
-        glColor3ub(red, green, blue);
-    }
-    glVertex2f(radio , -radio);
-    glVertex2f(radio , radio);
-    glVertex2f(-radio , radio);
-    glVertex2f(-radio , -radio);
-    glVertex2f(radio , -radio);
-
-    glEnd();
-}
-
 
 int main(int argc, char** argv) 
 {
@@ -100,12 +77,15 @@ int main(int argc, char** argv)
     // Initialisation du titre de la fenetre
     SDL_WM_SetCaption(WINDOW_TITLE, NULL);
 
-    glMatrixMode(GL_MODELVIEW);
-    glLoadIdentity();
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
 
     /* Pour le temps 
     time_t rawtime;
     struct tm* timeinfo;*/
+
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
 
     /* Boucle principale */
     int loop = 1;
@@ -113,25 +93,24 @@ int main(int argc, char** argv)
     {
         // Recuperation du temps au debut de la boucle
         Uint32 startTime = SDL_GetTicks();
-        
-        // Placer ici le code de dessin
+
+        /* Nettoyage de la fenetre */ 
         glClear(GL_COLOR_BUFFER_BIT);
         glClearColor(0.1, 0.1, 0.1, 1);
+        
+        /* Code de dessin */
+        drawImageMap(GL_VIEW_WIDTH, GL_VIEW_HEIGHT);
+        drawTowers(towers);
 
         /* Récupération de l'heure
         time(&rawtime);
         timeinfo = localtime(&rawtime);*/
 
-        // Dessin rectangle
-        glPushMatrix();
-            glScalef(3, 35, 0);
-            drawSquare(1, 0, 255, 255);
-        glPopMatrix();
-
         // Echange du front et du back buffer : mise a jour de la fenetre
         SDL_GL_SwapBuffers();
         
         /* Boucle traitant les evenements */
+        float x,y;
         SDL_Event e;
         while(SDL_PollEvent(&e)) 
         {
@@ -160,6 +139,9 @@ int main(int argc, char** argv)
                 // Clic souris
                 case SDL_MOUSEBUTTONUP:
                     printf("clic en (%d, %d)\n", e.button.x, e.button.y);
+                    x = -GL_VIEW_WIDTH + GL_VIEW_WIDTH*2 * (e.button.x) / WINDOW_WIDTH;
+                    y = -(-GL_VIEW_HEIGHT + GL_VIEW_HEIGHT*2 * (e.button.y) / WINDOW_HEIGHT);
+                    addTower(allocTower(TRED, x, y), &towers);
                     break;
                 
                 // Touche clavier

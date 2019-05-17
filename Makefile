@@ -7,7 +7,11 @@ SRCDIR	= src/
 INCLUDEDIR	= include/
 OBJDIR	= obj/
 BIN    = $(BINDIR)towerdef.itd
+<<<<<<< Updated upstream
 OBJ    = $(OBJDIR)main.o $(OBJDIR)imageMap.o $(OBJDIR)controller.o $(OBJDIR)map.o
+=======
+OBJ    = $(OBJDIR)main.o $(OBJDIR)imageMap.o $(OBJDIR)controller.o $(OBJDIR)tower.o
+>>>>>>> Stashed changes
 
 RM     = rm -f
 DIRNAME = $(shell basename $$PWD)
@@ -20,13 +24,19 @@ all : $(OBJ)
 	@echo "            to execute type: $(BIN) &"
 	@echo "--------------------------------------------------------------"
 
-$(OBJDIR)main.o : $(SRCDIR)main.c $(SRCDIR)imageMap.c $(INCLUDEDIR)imageMap.h $(SRCDIR)controller.c $(INCLUDEDIR)controller.h $(SRCDIR)map.c $(INCLUDEDIR)map.h
+$(OBJDIR)main.o : $(SRCDIR)main.c $(SRCDIR)imageMap.c $(INCLUDEDIR)imageMap.h $(SRCDIR)controller.c $(INCLUDEDIR)controller.h $(SRCDIR)map.c $(INCLUDEDIR)map.h $(SRCDIR)tower.c $(INCLUDEDIR)tower.h
 	@echo "compile main"
 	mkdir -p `dirname $@`
 	$(CC) -o $@ -c $< $(CFLAGS)
 	@echo "done..."
 
-$(OBJDIR)imageMap.o : $(SRCDIR)imageMap.c $(INCLUDEDIR)imageMap.h
+$(OBJDIR)tower.o : $(SRCDIR)tower.c $(INCLUDEDIR)tower.h $(SRCDIR)controller.c $(INCLUDEDIR)controller.h
+	@echo "compile map"
+	mkdir -p `dirname $@`
+	$(CC) -o $@ -c $< $(CFLAGS)
+	@echo "done..."
+
+$(OBJDIR)imageMap.o : $(SRCDIR)imageMap.c $(INCLUDEDIR)imageMap.h $(SRCDIR)controller.c $(INCLUDEDIR)controller.h
 	@echo "compile controller"
 	mkdir -p `dirname $@`
 	$(CC) -o $@ -c $< $(CFLAGS)
