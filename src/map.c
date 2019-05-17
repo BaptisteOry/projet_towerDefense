@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "../include/map.h"
 #include "../include/imageMap.h"
@@ -31,7 +32,7 @@ void itdCheck(char* itdFile, ImageMap* map, ItdEltsInfos* infos, Graph* graph) {
  
 	if (file == NULL) {
 		printf("Error while opening .itd file.\n");
-	  	return EXIT_FAILURE;
+	  	EXIT_FAILURE;
 	}
 
 	/* FILE CHECK */
@@ -39,7 +40,7 @@ void itdCheck(char* itdFile, ImageMap* map, ItdEltsInfos* infos, Graph* graph) {
 	// Itd code check
 	fscanf(file, "%s %d", code, &version);
 	printf("%s\n", code);
-	if(code != "@ITD") {
+	if(strcmp(code, "@ITD") != 0) {
 		printf("ERROR : Wrong .itd file format.\n");
 		EXIT_FAILURE;
 	}
@@ -50,20 +51,20 @@ void itdCheck(char* itdFile, ImageMap* map, ItdEltsInfos* infos, Graph* graph) {
 
 	// Read comment
 	fgets(comments, sizeof comments, file);
-	if(comments[0] != "#") {
+	if(strcmp(&comments[0], "#")!=0) {
 		printf("Second line isn't comments.");
-		EXIT_FAILURE
+		EXIT_FAILURE;
 	}
 	fputs(comments, stdout);
 
 	// Read & store variables & values
-	while(fscanf(file, "%s", keyword) != NULL) {
-		if(keyword=="carte") {
+	while(fscanf(file, "%s", keyword)) {
+		if(strcmp(keyword, "carte")==0) {
 			fscanf(file, "%s", ppmFileName);
 		}
-		else if(keyword=="chemin" || keyword=="noeud" || keyword=="construct" || keyword=="in" || keyword=="out"){
+		else if(strcmp(keyword, "chemin")==0 || strcmp(keyword, "noeud")==0 || strcmp(keyword, "construct")==0 || strcmp(keyword, "in")==0 || strcmp(keyword, "out")==0){
 			fscanf(file, "%d %d %d", &valueR, &valueG, &valueB);
-			infos->keyword=keyword;
+			*(infos->keyword)=*keyword;
 			if(testPixel(valueR)==0) {
 				infos->r=valueR;
 			}
@@ -73,40 +74,41 @@ void itdCheck(char* itdFile, ImageMap* map, ItdEltsInfos* infos, Graph* graph) {
 			if(testPixel(valueB)==0) {
 				infos->b=valueB;
 			}
-			else if (!testPixel(valueR)==1 || !testPixel(valueG)==1 || !testPixel(valueB)==1) {
+			else if (testPixel(valueR)!=1 || testPixel(valueG)!=1 || testPixel(valueB)!=1) {
 				printf("ERROR : Wrong pixel value(s).\n");
 				EXIT_FAILURE;
 			}
 			infos=infos->nextKeyword;
 		}
 		else {
-			printf("=ERROR : Keyword not valid.\n");
+			printf("ERROR : Keyword not valid.\n");
 			EXIT_FAILURE;
 		}
 	}
 
 	// Read & store nodes description
-	fscanf(file, "%d", nodesNumber);
+	fscanf(file, "%d", &nodesNumber);
 	int nodesCount = 0;
 	Node* nodes = graph->nodes;
 	Link* links = graph->links;
 
 	char EOL ='\n';
 	char buffer[20];
+	int i = 0;
 
-	while(!foef(file)) {
+	while(!EOF) {
 		// Create nodes
 		nodesCount++;
 		fscanf(file, "%d %d %d %d", &nodeId, &nodeType, &nodeX, &nodeY);
 		nodes->id = nodeId;
-		nodes->nodeType = nodeType;
+		nodes->type = nodeType;
 		nodes->x = nodeX;
 		nodes->y = nodeY;
 		while(buffer[i] != EOL) {
 			// Create links
-			fscanf(file, "%d", nodeLink);
-			links->id1 = nodes->id;
-			links->id2 = nodeLink;
+			fscanf(file, "%d", &nodeLink);
+			links->nodeId1 = nodes->id;
+			links->nodeId2 = nodeLink;
 			links = links->nextLink;
 			i++;
 		}
@@ -137,23 +139,23 @@ void mapCheck(ImageMap* map, ItdEltsInfos* infos, Graph* graph) {
 
 	// Check all nodes
 	while(tempNode != NULL) {
-		if(tempNode->type = 1) {
-			while(tempInfo->keyword != "in") {
-				tempInfo=tempInfo->nextInfo;
+		if(tempNode->type == 1) {
+			while(strcmp(tempInfo->keyword, "in")!=0) {
+				tempInfo=tempInfo->nextKeyword;
 			}
 			testNodeOnMap(tempInfo->r, tempInfo->g, tempInfo->b, tempNode, map);
 			tempInfo = infos;
 		}
-		else if(tempNode->type = 2) {
-			while(tempInfo->keyword != "out") {
-				tempInfo=tempInfo->nextInfo;
+		else if(tempNode->type == 2) {
+			while(strcmp(tempInfo->keyword, "out")!=0) {
+				tempInfo=tempInfo->nextKeyword;
 			}
 			testNodeOnMap(tempInfo->r, tempInfo->g, tempInfo->b, tempNode, map);
 			tempInfo = infos;
 		}
-		else if(tempNode->type = 3 || tempNode->type = 4) {
-			while(tempInfo->keyword != "node") {
-				tempInfo=tempInfo->nextInfo;
+		else if(tempNode->type == 3 || tempNode->type == 4) {
+			while(strcmp(tempInfo->keyword, "node")!=0) {
+				tempInfo=tempInfo->nextKeyword;
 			}
 			testNodeOnMap(tempInfo->r, tempInfo->g, tempInfo->b, tempNode, map);
 			tempInfo = infos;
@@ -161,19 +163,31 @@ void mapCheck(ImageMap* map, ItdEltsInfos* infos, Graph* graph) {
 	}
 
 	// Check other pixels
-	while(tempInfo->keyword != "construct") {
-		tempInfo = tempInfo->nextInfo;
+	while(strcmp(tempInfo->keyword, "construct")!=0) {
+		tempInfo = tempInfo->nextKeyword;
 	}
+	tempInfo = infos;
 	int r = tempInfo->r;
 	int g = tempInfo->g;
 	int b = tempInfo->b;
+
+	while(strcmp(tempInfo->keyword, "chemin")!=0) {
+		tempInfo=tempInfo->nextKeyword;
+	}
+	int pathR = tempInfo->r;
+	int pathG = tempInfo->g;
+	int pathB = tempInfo->b;
 
 	for(int i = 0; i<(map->height)*(map->width); i=i+3) {
 		int R = map->data[i];
 		int G = map->data[i+1];
 		int B = map->data[i+2];
 		if(R != r || G != g || B != b) {
-			printf("ERROR : ");
+			if((R == pathR) && (G == pathG) && (B == pathB)) {
+
+			}
+
+			printf("ERROR : Pixel color doesn't match anything.");
 		}
 	}
 
@@ -183,11 +197,20 @@ void mapCheck(ImageMap* map, ItdEltsInfos* infos, Graph* graph) {
 void testNodeOnMap(int r, int g, int b, Node* node, ImageMap* map) {
 	int x = node->x;
 	int y = node->y;
-	if((map->data)[y*map->width + x*3] != r, (map->data)[y*map->width + x*3 +1] != g, (map->data)[y*map->width + x*3 +2] != b) {
+	if((map->data)[y*map->width + x*3] != r || (map->data)[y*map->width + x*3 +1] != g || (map->data)[y*map->width + x*3 +2] != b) {
 		printf("ERROR : %d node not in wright place.\n", node->id);
 		EXIT_FAILURE;
 	}
 
+}
+
+void testIfPath(int dataIndex, Graph* graph, ImageMap* map) {
+	// Check if dataIndex is between two nodes
+	int x = dataIndex%map->width;
+	int y = dataIndex/map->width;
+	
+
+	// Check if the two nodes are linked
 }
 
 /*void createGraph(Graph* graph) {

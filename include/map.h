@@ -27,6 +27,7 @@ typedef struct ItdEltsInfos {
 } ItdEltsInfos;
 
 
+void itdCheck(char* itdFile, ImageMap* map, ItdEltsInfos* infos, Graph* graph);
 
 // Verifies if the .itd file corresponds to the map
 void mapCheck(ImageMap* map, ItdEltsInfos* infos, Graph* graph);
