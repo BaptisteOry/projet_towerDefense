@@ -1,6 +1,12 @@
+#include <SDL/SDL.h>
+#include <SDL/SDL_image.h>
+#include <GL/gl.h>
+#include <GL/glu.h>
+
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "../include/controller.h"
 #include "../include/imageMap.h"
 
 int newImageMap(ImageMap *imageMap, unsigned int width, unsigned int height)
@@ -78,4 +84,12 @@ int testPixel(int pixel) {
     return 0;
   }
   return 1;
+}
+
+void drawImageMap(int width, int height){
+    GLuint imageMapTexture = loadTexture("images/map01.jpg");
+
+    glPushMatrix();
+        drawPicture(imageMapTexture, width, height); // Taille image map
+    glPopMatrix();
 }

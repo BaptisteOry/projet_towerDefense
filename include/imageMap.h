@@ -30,4 +30,6 @@ int loadImageMapPPM(ImageMap *imageMap, char *filename);
 
 int testPixel(int pixel);
 
+void drawImageMap(int width, int height);
+
 #endif
