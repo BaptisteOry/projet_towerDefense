@@ -7,7 +7,7 @@ SRCDIR	= src/
 INCLUDEDIR	= include/
 OBJDIR	= obj/
 BIN    = $(BINDIR)towerdef.itd
-OBJ    = $(OBJDIR)main.o $(OBJDIR)imageMap.o $(OBJDIR)controller.o $(OBJDIR)map.o $(OBJDIR)tower.o
+OBJ    = $(OBJDIR)main.o $(OBJDIR)imageMap.o $(OBJDIR)controller.o $(OBJDIR)map.o $(OBJDIR)object.o $(OBJDIR)tower.o $(OBJDIR)building.o
 
 RM     = rm -f
 DIRNAME = $(shell basename $$PWD)
@@ -20,7 +20,7 @@ all : $(OBJ)
 	@echo "            to execute type: $(BIN) &"
 	@echo "--------------------------------------------------------------"
 
-$(OBJDIR)main.o : $(SRCDIR)main.c $(SRCDIR)imageMap.c $(INCLUDEDIR)imageMap.h $(SRCDIR)controller.c $(INCLUDEDIR)controller.h $(SRCDIR)map.c $(INCLUDEDIR)map.h $(SRCDIR)tower.c $(INCLUDEDIR)tower.h
+$(OBJDIR)main.o : $(SRCDIR)main.c $(SRCDIR)imageMap.c $(INCLUDEDIR)imageMap.h $(SRCDIR)controller.c $(INCLUDEDIR)controller.h $(SRCDIR)map.c $(INCLUDEDIR)map.h $(SRCDIR)tower.c $(INCLUDEDIR)object.h $(SRCDIR)object.c $(INCLUDEDIR)tower.h $(SRCDIR)building.c $(INCLUDEDIR)building.h
 	@echo "compile main"
 	mkdir -p `dirname $@`
 	$(CC) -o $@ -c $< $(CFLAGS)
@@ -44,12 +44,23 @@ $(OBJDIR)map.o : $(SRCDIR)map.c $(INCLUDEDIR)map.h
 	$(CC) -o $@ -c $< $(CFLAGS)
 	@echo "done..."
 
-$(OBJDIR)tower.o : $(SRCDIR)tower.c $(INCLUDEDIR)tower.h
+$(OBJDIR)object.o :  $(SRCDIR)object.c $(INCLUDEDIR)object.h $(SRCDIR)tower.c $(INCLUDEDIR)tower.h $(SRCDIR)building.c $(INCLUDEDIR)building.h $(SRCDIR)controller.c $(INCLUDEDIR)controller.h
 	@echo "compile tower"
 	mkdir -p `dirname $@`
 	$(CC) -o $@ -c $< $(CFLAGS)
 	@echo "done..."	
 
+$(OBJDIR)tower.o : $(SRCDIR)tower.c $(INCLUDEDIR)tower.h $(SRCDIR)controller.c $(INCLUDEDIR)controller.h
+	@echo "compile tower"
+	mkdir -p `dirname $@`
+	$(CC) -o $@ -c $< $(CFLAGS)
+	@echo "done..."	
+
+$(OBJDIR)building.o : $(SRCDIR)building.c $(INCLUDEDIR)building.h $(SRCDIR)controller.c $(INCLUDEDIR)controller.h
+	@echo "compile building"
+	mkdir -p `dirname $@`
+	$(CC) -o $@ -c $< $(CFLAGS)
+	@echo "done..."	
 
 clean :	
 	@echo "**************************"

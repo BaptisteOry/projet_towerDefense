@@ -9,6 +9,8 @@ typedef struct ImageMap{
   unsigned char *data;
   unsigned int width;
   unsigned int height;
+
+  GLuint sprite; // Sprite
 }ImageMap;
 
 /// \brief allocate the memory for a new image
@@ -16,20 +18,20 @@ typedef struct ImageMap{
 /// \param width: width of the required the image
 /// \param widthheight: height of the required the image
 /// \return EXIT_FAILURE in case of problem, else EXIT_SUCCESS
-int newImageMap(ImageMap *imageMap, unsigned int width, unsigned int height);
+int newImageMap(ImageMap *imageMap, unsigned int width, unsigned int height, char *fileName);
 
 /// \brief release the image memory
 /// \param imageMap: pointer on the image
-void freeImageMap(ImageMap *imageMap);
+void freeImageMap(ImageMap* imageMap);
 
 /// \brief load an image with PPM (P3) file format
 /// \param image: pointer on the image to load
 /// \param filename: char array containing the filename of the image to load
 /// \return EXIT_FAILURE in case of problem, else EXIT_SUCCESS
-int loadImageMapPPM(ImageMap *imageMap, char *filename);
+int loadImageMapPPM(ImageMap* imageMap, char *fileName);
 
 int testPixel(int pixel);
 
-void drawImageMap(int width, int height);
+void drawImageMap(ImageMap* imageMap, int width, int height);
 
 #endif

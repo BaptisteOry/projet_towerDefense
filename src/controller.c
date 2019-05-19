@@ -2,6 +2,7 @@
 #include <SDL/SDL_image.h>
 #include <GL/gl.h>
 #include <GL/glu.h>
+#include <math.h>
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -13,6 +14,8 @@ void drawPicture(GLuint texture, int xScale, int yScale){
     glBindTexture(GL_TEXTURE_2D, texture);
 
     glBegin(GL_QUADS);
+        glColor3ub(255, 255, 255);
+
         glTexCoord2f(0, 1);
         glVertex2f(-xScale, -yScale);
     
@@ -46,7 +49,6 @@ GLuint loadTexture (char* fileName){
     glBindTexture(GL_TEXTURE_2D, texture);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     GLenum format;
-    printf("%d\n", imgTexture->format->BytesPerPixel);
     switch(imgTexture->format->BytesPerPixel) {
         case 1:
             format = GL_RED;
@@ -69,4 +71,31 @@ GLuint loadTexture (char* fileName){
     glBindTexture(GL_TEXTURE_2D, 0);
 
     return texture;
+}
+
+void drawCircle(int red, int green, int blue, int alpha, int size){
+    int i = 0;
+
+    glBegin(GL_TRIANGLE_FAN);
+        glColor4ub(red, green, blue, alpha);
+        glVertex2f(0.0, 0.0);
+
+        for(i = 0; i < CIRCLE_SUBDIVS; i++){
+            glVertex2f( (cos(i * (2 * M_PI / (float) CIRCLE_SUBDIVS)))*size, 
+                        (sin(i * (2 * M_PI / (float) CIRCLE_SUBDIVS)))*size);
+        }
+        glVertex2f( (cos(i * (2 * M_PI / (float) CIRCLE_SUBDIVS))*size), 
+                    (sin(i * (2 * M_PI / (float) CIRCLE_SUBDIVS)))*size);
+    glEnd();
+}
+
+int isShapeIntersectsShape(float x1, float y1, float x2, float y2, int size1, int size2){
+    if(    x1 + (size1 + size2) >= x2
+        && x1 - (size1 + size2) <= x2
+        && y1 + (size1 + size2) >= y2
+        && y1 - (size1 + size2) <= y2){
+        return 1;
+    }else{
+        return 0;
+    }
 }

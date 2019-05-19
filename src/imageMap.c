@@ -9,7 +9,7 @@
 #include "../include/controller.h"
 #include "../include/imageMap.h"
 
-int newImageMap(ImageMap *imageMap, unsigned int width, unsigned int height)
+int newImageMap(ImageMap *imageMap, unsigned int width, unsigned int height, char *fileName)
 {
   // memory allocation
   imageMap->data = (unsigned char*) malloc(sizeof(unsigned char) * width*height*3);
@@ -21,6 +21,11 @@ int newImageMap(ImageMap *imageMap, unsigned int width, unsigned int height)
   // update width and height
   imageMap->width  = width;
   imageMap->height = height;
+
+  // load sprite
+  char fileNameJpg[255]= "";
+  strcat(strcpy(fileNameJpg, fileName), ".jpg");
+  imageMap->sprite = loadTexture(fileNameJpg);
 
   return EXIT_SUCCESS;
 }
@@ -39,14 +44,16 @@ void freeImageMap(ImageMap *imageMap)
 }
 
 // reads P3
-int loadImageMapPPM(ImageMap *imageMap, char *filename){
+int loadImageMapPPM(ImageMap* imageMap, char *fileName){
   FILE *myFile = NULL;
   char chaine[255];
   unsigned int width,height;
 
   // open the file for reading (rt)
-  if (!(myFile = fopen(filename, "rt"))){ 
-    printf("loadImageMapPPM: error opening file %s.\n", filename);
+  char fileNamePpm[255]= "";
+  strcat(strcpy(fileNamePpm, fileName), ".ppm");
+  if (!(myFile = fopen(fileNamePpm, "rt"))){ 
+    printf("loadImageMapPPM: error opening file %s.\n", fileName);
     return EXIT_FAILURE;
   }
 
@@ -65,7 +72,7 @@ int loadImageMapPPM(ImageMap *imageMap, char *filename){
   fscanf(myFile, "%s\n", chaine);
 
   // memory allocation
-  if(newImageMap(imageMap, width, height) == EXIT_FAILURE){
+  if(newImageMap(imageMap, width, height, fileName) == EXIT_FAILURE){
     printf("newImage: memory allocation error\n");
     return EXIT_FAILURE;
   }
@@ -79,17 +86,15 @@ int loadImageMapPPM(ImageMap *imageMap, char *filename){
   return EXIT_SUCCESS;
 }
 
-int testPixel(int pixel) {
-  if(pixel>=0 && pixel<=255) {
+int testPixel(int pixel){
+  if(pixel>=0 && pixel<=255){
     return 0;
   }
   return 1;
 }
 
-void drawImageMap(int width, int height){
-    GLuint imageMapTexture = loadTexture("images/map01.jpg");
-
-    glPushMatrix();
-        drawPicture(imageMapTexture, width, height); // Taille image map
-    glPopMatrix();
+void drawImageMap(ImageMap* imageMap, int width, int height){
+  glPushMatrix();
+      drawPicture(imageMap->sprite, width, height); // Taille image map
+  glPopMatrix();
 }
