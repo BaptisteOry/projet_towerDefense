@@ -9,7 +9,7 @@
 #include "../include/controller.h"
 #include "../include/tower.h"
 
-Tower* allocTower(towerType type, float x, float y, int size){
+Tower* allocTower(towerType type, float x, float y){
     Tower* t = (Tower*) malloc(sizeof(Tower));
     if(t == NULL) {
 		fprintf(stderr, "MEMORY ERROR\n");
@@ -24,7 +24,7 @@ Tower* allocTower(towerType type, float x, float y, int size){
 			t->power = 100;
 			t->range= 135;
 			t->rate = 10; //every second
-			t->cost = 500;
+			t->cost = 50;
 			t->r = 255; t->g = 0; t->b = 0;
 			t->sprite = loadTexture("images/tower_1.png");
 			break;
@@ -32,7 +32,7 @@ Tower* allocTower(towerType type, float x, float y, int size){
 			t->power = 50;
 			t->range= 110;
 			t->rate = 85; //every 200ms
-			t->cost = 300;
+			t->cost = 40;
 			t->r = 0; t->g = 255; t->b = 0;
 			t->sprite = loadTexture("images/tower_2.png");
 			break;
@@ -40,7 +40,7 @@ Tower* allocTower(towerType type, float x, float y, int size){
 			t->power = 30;
 			t->range= 95;
 			t->rate = 30; //every 600ms
-			t->cost = 250;
+			t->cost = 30;
 			t->r = 255; t->g = 255; t->b = 0;
 			t->sprite = loadTexture("images/tower_3.png");
 			break;
@@ -48,14 +48,14 @@ Tower* allocTower(towerType type, float x, float y, int size){
 			t->power = 30;
 			t->range= 80;
 			t->rate = 30; //every 400ms
-			t->cost = 400;
+			t->cost = 20;
 			t->r = 0; t->g = 0; t->b = 255;
 			t->sprite = loadTexture("images/tower_4.png");
 			break;
 		default:
 			break;
 	}
-	t->size = size;
+	t->size = 25;
 	t->next = NULL;
 
     return t;
@@ -73,6 +73,12 @@ void addTower(Tower* t, TowerList* list){
     }
 }
 
+void freeTower(Tower* t){
+	if(t != NULL){
+        free(t);
+    }
+}
+
 int deleteTower(Tower* t, TowerList* list){
 	if(t == NULL || *list == NULL){
 		return 0;
@@ -84,7 +90,6 @@ int deleteTower(Tower* t, TowerList* list){
 		toDelete = *modif;
 	}
 	if(toDelete == NULL){
-		printf("%s\n", "lol");
 		return 0;
 	}else{
 		*modif = toDelete->next;
@@ -130,10 +135,29 @@ void drawRangeTowers(TowerList list){
 
 Tower* towerSelected(TowerList list, float x, float y){
 	while(list != NULL){
-		if(isShapeIntersectsShape(list->x, list->y, x, y, list->size, 0)){
+		if(isSquareIntersectsCircle(list->x, list->y, x, y, list->size, 0)){
 		    return list;
 		}
 		list = list->next;
+	}
+    return 0;
+}
+
+Tower* towerIntersection(TowerList list, float xNew, float yNew, int sizeNew, shape shapeNew){
+	if(shapeNew == CIRCLE){
+		while(list != NULL){
+			if(isCircleIntersectsCircle(list->x, list->y, xNew, yNew, list->size, sizeNew)){
+			    return list;
+			}
+			list = list->next;
+		}
+	}else if(shapeNew == SQUARE){
+		while(list != NULL){
+			if(isSquareIntersectsCircle(list->x, list->y, xNew, yNew, list->size, sizeNew)){
+			    return list;
+			}
+			list = list->next;
+		}
 	}
     return 0;
 }

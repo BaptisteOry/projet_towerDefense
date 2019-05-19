@@ -8,16 +8,18 @@
 #include <math.h>
 #include <time.h>
 
-#include "../include/tower.h"
-#include "../include/building.h"
-#include "../include/object.h"
+#include "../include/game.h"
 #include "../include/controller.h"
+#include "../include/building.h"
+#include "../include/tower.h"
+#include "../include/object.h"
+#include "../include/object.h"
 #include "../include/imageMap.h"
 #include "../include/map.h"
 
 // Dimensions initiales et titre de la fenetre
-static const unsigned int WINDOW_WIDTH = 1000;
-static const unsigned int WINDOW_HEIGHT = 600;
+static unsigned int WINDOW_WIDTH = 1000;
+static unsigned int WINDOW_HEIGHT = 600;
 static const char WINDOW_TITLE[] = "Tower defense";
 // Espace fenetre virtuelle
 static const float GL_VIEW_WIDTH = 250.;
@@ -30,6 +32,8 @@ static const Uint32 FRAMERATE_MILLISECONDS = 100;
 // Initialisation des valeurs principales
 static ImageMap imageMap;
 static char imageMap01[255]="images/map01";
+
+static Game* game;
 
 static TowerList towers;
 static BuildingList buildings;
@@ -50,6 +54,8 @@ void reshape(SDL_Surface** surface, unsigned int width, unsigned int height){
     }
     *surface = surface_temp;
 
+    WINDOW_WIDTH = (*surface)->w;
+    WINDOW_HEIGHT = (*surface)->h;
     glViewport(0, 0, (*surface)->w, (*surface)->h);
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
@@ -80,6 +86,7 @@ int main(int argc, char** argv){
     if(loadImageMapPPM(&imageMap, imageMap01) != EXIT_SUCCESS){
         return EXIT_FAILURE;
     }
+    game = allocGame();
     /* Pour le temps 
     time_t rawtime;
     struct tm* timeinfo;*/
@@ -97,10 +104,10 @@ int main(int argc, char** argv){
         
         /* Code de dessin */
         drawImageMap(&imageMap, GL_VIEW_WIDTH, GL_VIEW_HEIGHT);
-        drawTowers(towers);
-        drawBuildings(buildings);
         drawRangeTowers(towers);
         drawRangeBuildings(buildings);
+        drawTowers(towers);
+        drawBuildings(buildings);
 
         /* Récupération de l'heure
         time(&rawtime);
@@ -111,6 +118,8 @@ int main(int argc, char** argv){
         
         /* Boucle traitant les evenements */
         float x,y;
+        Tower* tempT;
+        Building* tempB;
         SDL_Event e;
         while(SDL_PollEvent(&e)){
             // L'utilisateur ferme la fenetre
@@ -135,24 +144,46 @@ int main(int argc, char** argv){
                     printf("clic en (%d, %d)\n", e.button.x, e.button.y);
                     x = -GL_VIEW_WIDTH + GL_VIEW_WIDTH*2 * (e.button.x) / WINDOW_WIDTH;
                     y = -(-GL_VIEW_HEIGHT + GL_VIEW_HEIGHT*2 * (e.button.y) / WINDOW_HEIGHT);
+                    printf("coord (%f, %f)\n", x, y);
                     switch(e.button.button){
                         case SDL_BUTTON_LEFT:
+                        printf("%d\n", game->money);
                             if(towerToBuild != -1){
-                                int sizeNew = (GL_VIEW_WIDTH*100)/WINDOW_WIDTH;
-                                if(!(isIntersection(towers, buildings, x, y, sizeNew))){
-                                    addTower(allocTower(towerToBuild, x, y, sizeNew), &towers);
+                                tempT = allocTower(towerToBuild, x, y);
+                                if(!(towerIntersection(towers, tempT->x, tempT->y, tempT->size, CIRCLE)) 
+                                   && !(buildingIntersection(buildings, tempT->x, tempT->y, tempT->size, CIRCLE))
+                                   && (tempT->cost <= game->money)){
+                                    addTower(tempT, &towers);
+                                    game->money -= tempT->cost;
+                                }else{
+                                    free(tempT);
                                 }
                             }else if(buildingToBuild != -1){
-                                int sizeNew = (GL_VIEW_WIDTH*100)/WINDOW_WIDTH;
-                                if(!(isIntersection(towers, buildings, x, y, sizeNew))){
-                                    addBuilding(allocBuilding(buildingToBuild, x, y, sizeNew), &buildings);
+                                tempB = allocBuilding(buildingToBuild, x, y);
+                                if(!(towerIntersection(towers, tempB->x, tempB->y, tempB->size, SQUARE)) 
+                                   && !(buildingIntersection(buildings, tempB->x, tempB->y, tempB->size, SQUARE))
+                                   && (tempB->cost <= game->money)){
+                                    addBuilding(tempB, &buildings);
+                                    giveBonusTowers(tempB, &towers);
+                                    game->money -= tempB->cost;
+                                }else{
+                                    free(tempB);
                                 }
                             }
                             break;
 
                         case SDL_BUTTON_RIGHT:
-                            deleteTower(towerSelected(towers, x, y), &towers);
-                            deleteBuilding(buildingSelected(buildings, x, y), &buildings);
+                            tempT = towerSelected(towers, x, y);
+                            if(tempT != NULL){
+                                deleteTower(tempT, &towers);
+                                game->money += tempT->cost;
+                            }
+                            tempB = buildingSelected(buildings, x, y);
+                            if(tempB != NULL){
+                                removeBonusTowers(tempB, &towers);
+                                deleteBuilding(tempB, &buildings);
+                                game->money += tempB->cost;
+                            }
                             break;
 
                         default:

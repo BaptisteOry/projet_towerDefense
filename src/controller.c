@@ -89,7 +89,43 @@ void drawCircle(int red, int green, int blue, int alpha, int size){
     glEnd();
 }
 
-int isShapeIntersectsShape(float x1, float y1, float x2, float y2, int size1, int size2){
+void drawSquare(int red, int green, int blue, int alpha, int size){
+    
+    glBegin(GL_TRIANGLE_FAN);
+    glColor4ub(red, green, blue, alpha);
+        glVertex2f(0.0, 0.0);
+        
+        glVertex2f(size , -size);
+        glVertex2f(size , size);
+        glVertex2f(-size , size);
+        glVertex2f(-size , -size);
+        glVertex2f(size , -size);
+    glEnd();
+}
+
+int isCircleIntersectsCircle(float x1, float y1, float x2, float y2, int size1, int size2){
+    if(    x1 + (size1 + size2) >= x2
+        && x1 - (size1 + size2) <= x2
+        && y1 + (size1 + size2) >= y2
+        && y1 - (size1 + size2) <= y2){
+        return 1;
+    }else{
+        return 0;
+    }
+}
+
+int isSquareIntersectsCircle(float x1, float y1, float x2, float y2, int size1, int size2){
+    if(    x1 + (size1 + size2) >= x2
+        && x1 - (size1 + size2) <= x2
+        && y1 + (size1 + size2) >= y2
+        && y1 - (size1 + size2) <= y2){
+        return 1;
+    }else{
+        return 0;
+    }
+}
+
+int isSquareIntersectsSquare(float x1, float y1, float x2, float y2, int size1, int size2){
     if(    x1 + (size1 + size2) >= x2
         && x1 - (size1 + size2) <= x2
         && y1 + (size1 + size2) >= y2

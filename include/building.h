@@ -11,7 +11,7 @@ typedef struct Building {
 	buildingType type; // Type
 	float x, y; // Positions
 
-	int range; // Portée
+	float range; // Portée
 	int cost; // Coût
 
 	GLuint sprite; // Sprite
@@ -21,12 +21,14 @@ typedef struct Building {
 	struct Building *next; // Bâtiment suivant
 } Building, *BuildingList;
 
-Building* allocBuilding(buildingType type, float x, float y, int size);
+Building* allocBuilding(buildingType type, float x, float y);
 void addBuilding(Building* b, BuildingList* list);
+void freeBuilding(Building* b);
 int deleteBuilding(Building* b, BuildingList* list);
 void deleteBuildings(BuildingList* list);
 void drawBuildings(BuildingList list);
 void drawRangeBuildings(BuildingList list);
 Building* buildingSelected(BuildingList list, float x, float y);
+Building* buildingIntersection(BuildingList buildings, float xNew, float yNew, int sizeNew, shape shapeNew);
 
 #endif

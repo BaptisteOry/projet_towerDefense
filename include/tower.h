@@ -11,9 +11,9 @@ typedef struct Tower {
 	towerType type; // Type
 	float x, y; // Positions
 
-	int power; // Puissance
-	int range; // Portée
-	int rate; // Cadence
+	float power; // Puissance
+	float range; // Portée
+	float rate; // Cadence
 	int cost; // Coût
 
 	GLuint sprite; // Sprite
@@ -23,12 +23,14 @@ typedef struct Tower {
 	struct Tower *next; // Tour suivante
 } Tower, *TowerList;
 
-Tower* allocTower(towerType type, float x, float y, int size);
+Tower* allocTower(towerType type, float x, float y);
 void addTower(Tower* t, TowerList* list);
+void freeTower(Tower* t);
 int deleteTower(Tower* t, TowerList* list);
 void deleteTowers(TowerList* list);
 void drawTowers(TowerList list);
 void drawRangeTowers(TowerList list);
 Tower* towerSelected(TowerList list, float x, float y);
+Tower* towerIntersection(TowerList towers, float xNew, float yNew, int sizeNew, shape shapeNew);
 
 #endif

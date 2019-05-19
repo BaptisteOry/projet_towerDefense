@@ -1,6 +1,7 @@
 #ifndef OBJECT_H__
 #define OBJECT_H__
 
-int isIntersection(TowerList towers, BuildingList buildings, float xNew, float yNew, int sizeNew);
+void giveBonusTowers(Building* b, TowerList* listTowers);
+void removeBonusTowers(Building* b, TowerList* listTowers);
 
 #endif
