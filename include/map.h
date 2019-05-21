@@ -7,7 +7,8 @@ typedef struct Node {
 	int id;
 	int x, y;
 	int type;
-	struct Node* nextNode;	
+	struct Node* nextNode;
+	struct Node* linkedNodes;
 } Node;
 
 typedef struct Link {
@@ -33,5 +34,7 @@ void itdCheck(char* itdFile, ImageMap* map, ItdEltsInfos* infos, Graph* graph);
 void mapCheck(ImageMap* map, ItdEltsInfos* infos, Graph* graph);
 
 void testNodeOnMap(int r, int g, int b, Node* node, ImageMap* map);
+
+void testIfPath(int dataIndex, Graph* graph, ImageMap* map);
 
 #endif

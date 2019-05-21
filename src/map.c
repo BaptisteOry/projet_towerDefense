@@ -138,9 +138,6 @@ void itdCheck(char* itdFile, ImageMap* map, ItdEltsInfos* infos, Graph* graph) {
 void mapCheck(ImageMap* map, ItdEltsInfos* infos, Graph* graph) {
 	ItdEltsInfos* tempInfo = infos;
 	Node* tempNode = graph->nodes;
-	Link* tempLink = graph->links;
-	int x = 0;
-	int y = 0;
 
 	// Check all nodes
 	while(tempNode != NULL) {
@@ -189,10 +186,12 @@ void mapCheck(ImageMap* map, ItdEltsInfos* infos, Graph* graph) {
 		int B = map->data[i+2];
 		if(R != r || G != g || B != b) {
 			if((R == pathR) && (G == pathG) && (B == pathB)) {
-
+				testIfPath(i, graph, map);
 			}
-
-			printf("ERROR : Pixel color doesn't match anything.");
+			else {
+				//tester si noeud (= si le x et le y correspondent a un noeud dans la liste) sinon erreur
+				printf("ERROR : Pixel color doesn't match anything.");
+			}
 		}
 	}
 
@@ -213,9 +212,36 @@ void testIfPath(int dataIndex, Graph* graph, ImageMap* map) {
 	// Check if dataIndex is between two nodes
 	int x = dataIndex%map->width;
 	int y = dataIndex/map->width;
-	
-
-	// Check if the two nodes are linked
+	Node* tempNode = graph->nodes;
+	while(tempNode != NULL) {
+		if(tempNode->x == x) {
+			Node* linkedNode = tempNode->linkedNodes;
+			while(linkedNode != NULL) {
+				if(linkedNode->x == x) {
+					if((tempNode->y < y && linkedNode->y > y) || (tempNode->y > y && linkedNode->y < y)) {
+						printf("This pixel in a on a path.");
+						EXIT_SUCCESS;
+					}
+				}
+				linkedNode = linkedNode->nextNode;	
+			}
+		}
+		if(tempNode->y == y) {
+			Node* linkedNode = tempNode->linkedNodes;
+			while(linkedNode != NULL) {
+				if(linkedNode->y == y) {
+					if((tempNode->x < x && linkedNode->x > x) || (tempNode->x > x && linkedNode->x < x)) {
+						printf("This pixel in a on a path.\n");
+						EXIT_SUCCESS;
+					}
+				}
+				linkedNode = linkedNode->nextNode;	
+			}
+		}		
+		tempNode = tempNode->nextNode;
+	}
+	printf("This pixel is not on a path but should be.\n");
+	EXIT_FAILURE;
 }
 
 /*void createGraph(Graph* graph) {
