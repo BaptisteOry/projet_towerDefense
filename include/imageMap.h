@@ -18,7 +18,7 @@ typedef struct ImageMap{
 /// \param width: width of the required the image
 /// \param widthheight: height of the required the image
 /// \return EXIT_FAILURE in case of problem, else EXIT_SUCCESS
-int newImageMap(ImageMap *imageMap, unsigned int width, unsigned int height, char *fileName);
+void newImageMap(ImageMap *imageMap, unsigned int width, unsigned int height, char *fileName);
 
 /// \brief release the image memory
 /// \param imageMap: pointer on the image
@@ -28,7 +28,7 @@ void freeImageMap(ImageMap* imageMap);
 /// \param image: pointer on the image to load
 /// \param filename: char array containing the filename of the image to load
 /// \return EXIT_FAILURE in case of problem, else EXIT_SUCCESS
-int loadImageMapPPM(ImageMap* imageMap, char *fileName);
+void loadImageMapPPM(ImageMap* imageMap, char *fileName);
 
 int testPixel(int pixel);
 

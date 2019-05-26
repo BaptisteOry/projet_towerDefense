@@ -12,13 +12,16 @@
 Tower* allocTower(towerType type, float x, float y){
     Tower* t = (Tower*) malloc(sizeof(Tower));
     if(t == NULL) {
-		fprintf(stderr, "MEMORY ERROR\n");
-		exit(1);
+		printf("allocTower : erreur d'allocation de mémoire\n");
+		exit(EXIT_FAILURE);
 	}
 
     t->type = type; // Type
 	t->x = x; // Position x
 	t->y = y; // Position y
+	t->powerMultiplier = 1;
+	t->rangeMultiplier = 1;
+	t->rateMultiplier = 1;
 	switch(type){
 		case TRED :
 			t->power = 100;
@@ -56,6 +59,7 @@ Tower* allocTower(towerType type, float x, float y){
 			break;
 	}
 	t->size = 25;
+	t->shape = CIRCLE;
 	t->next = NULL;
 
     return t;
@@ -75,47 +79,54 @@ void addTower(Tower* t, TowerList* list){
 
 void freeTower(Tower* t){
 	if(t != NULL){
-        free(t);
+		if(t->sprite){
+      		glDeleteTextures(1, &(t->sprite));
+    	}
+    	free(t);
     }
 }
 
-int deleteTower(Tower* t, TowerList* list){
-	if(t == NULL || *list == NULL){
-		return 0;
-	}
- 	TowerList *modif = list;
-    TowerList toDelete = *modif;
-	while(toDelete != NULL && toDelete->x != t->x && toDelete->y != t->y){
-		modif = &toDelete->next;
-		toDelete = *modif;
-	}
-	if(toDelete == NULL){
-		return 0;
-	}else{
-		*modif = toDelete->next;
-		free(toDelete);
-
-		return 1;
+void freeTowers(TowerList* list){
+	if(list != NULL){
+		Tower *temp = *list;
+    	Tower *next;
+    	while(temp != NULL){
+        	next = temp->next;
+        	if(temp->sprite){
+      			glDeleteTextures(1, &(temp->sprite));
+    		}
+        	free(temp);
+        	temp = next;
+    	}
+    	*list = NULL;
 	}
 }
 
-void deleteTowers(TowerList* list){
-    Tower *temp = *list;
-    Tower *next;
-    while(temp != NULL){
-        next = temp->next;
-        free(temp);
-        temp = next;
-    }
-    *list = NULL;
+void deleteTower(Tower* t, TowerList* list){
+	if(t != NULL && *list != NULL){
+	 	TowerList *modif = list;
+	    TowerList toDelete = *modif;
+		while(toDelete != NULL && toDelete->x != t->x && toDelete->y != t->y){
+			modif = &toDelete->next;
+			toDelete = *modif;
+		}
+		if(toDelete != NULL){
+			*modif = toDelete->next;
+			if(toDelete->sprite){
+	      		glDeleteTextures(1, &(toDelete->sprite));
+	    	}
+			free(toDelete);
+		}
+	}
 }
 
 void drawTowers(TowerList list){
     while(list != NULL){
 		glPushMatrix();
 			glTranslatef(list->x, list->y, 0);
-			drawCircle(list->r, list->g, list->b, 255, list->size);
-			drawPicture(list->sprite, list->size, list->size); // Taille tour
+			glScalef(list->size, list->size, 0);
+			drawCircle(list->r, list->g, list->b, 255);
+			drawPicture(list->sprite);
 		glPopMatrix();
 
         list = list->next;
@@ -126,11 +137,18 @@ void drawRangeTowers(TowerList list){
     while(list != NULL){
 		glPushMatrix();
 			glTranslatef(list->x, list->y, 0);
-			drawCircle(list->r, list->g, list->b, 40, list->range);
+			glScalef((list->range)*(list->rangeMultiplier), (list->range)*(list->rangeMultiplier), 0);
+			drawCircle(list->r, list->g, list->b, 40);
 		glPopMatrix();
 
         list = list->next;
     }
+}
+
+void drawInfosTower(Tower* t, char* infosConstructions){
+	if(t != NULL){
+		sprintf(infosConstructions, "Cout : %d\nPuissance : %d\nPortee : %d\nCadence : %d\n", t->cost, (int)(t->power*t->powerMultiplier), (int)(t->range*t->rangeMultiplier), (int)(t->rate*t->rateMultiplier));
+	}
 }
 
 Tower* towerSelected(TowerList list, float x, float y){
@@ -153,7 +171,7 @@ Tower* towerIntersection(TowerList list, float xNew, float yNew, int sizeNew, sh
 		}
 	}else if(shapeNew == SQUARE){
 		while(list != NULL){
-			if(isSquareIntersectsCircle(list->x, list->y, xNew, yNew, list->size, sizeNew)){
+			if(isSquareIntersectsSquare(list->x, list->y, xNew, yNew, list->size, sizeNew)){
 			    return list;
 			}
 			list = list->next;

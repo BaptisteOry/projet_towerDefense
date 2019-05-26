@@ -3,10 +3,13 @@
 
 typedef struct game{
 	int money;
-	int time;
+	int nbWave;
+	int nbMonstersWave;
+	int end;
 }Game;
 
 Game* allocGame();
 void freeGame(Game* game);
+void addWave(Game* g, MonsterList* list);
 
 #endif
