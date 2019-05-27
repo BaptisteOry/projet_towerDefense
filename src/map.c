@@ -108,13 +108,21 @@ void itdCheck(char* itdFile, ImageMap* map, ItdEltsInfos* infos, Graph* graph) {
 	fscanf(file, "%d", &nodesNumber);
 	printf("%d\n", nodesNumber);
 	int nodesCount = 0;
+	graph->nodes = malloc(sizeof(Node));
+	if(graph->nodes == NULL) {
+		printf("ERROR: bad allocation nodes in graph.\n");
+		EXIT_FAILURE;
+	}
+	graph->links = malloc(sizeof(Link));
+	if(graph->links == NULL) {
+		printf("ERROR : bad allocation links in graph.\n");
+	}
 	Node* nodes = graph->nodes;
 	Link* links = graph->links;
 
-
-	while (fgets(buf, sizeof(buf), file) != NULL && nodesCount < nodesNumber) {
+	fgets(buf, sizeof(buf), file);
+	while (fgets(buf, sizeof(buf), file) != NULL /*&& nodesCount < nodesNumber*/) {
 	    buf[strlen(buf) - 1] = '\0'; // eat the newline fgets() stores
-	    int nbElts = strlen(buf)/2 +1;
 
 	    //printf("%s\n", buf); // buf[i] is a character, and counts spaces
 	    sscanf(buf, "%d %d %d %d", &nodeId, &nodeType, &nodeX, &nodeY);
@@ -128,12 +136,16 @@ void itdCheck(char* itdFile, ImageMap* map, ItdEltsInfos* infos, Graph* graph) {
 	    	printf("%d ", nodeLink);
 	    	slice_str(buf, slicedBuf, 7+i, strlen(buf)-1);
 	    	i=i+2;
-	    	links->nodeId1 = nodes->id;
+	    	links->nodeId1 = nodeId;
 			links->nodeId2 = nodeLink;
 			links->nextLink = malloc(sizeof(Link));
 			links = links->nextLink;
 	    }
 	    printf("\n");
+	    nodes->id = nodeId;
+	    nodes->type = nodeType;
+	    nodes->x = nodeX;
+	    nodes->y = nodeY;
 	    nodes->nextNode = malloc(sizeof(Node));
 	    nodes = nodes->nextNode;
 	    nodesCount++;
