@@ -2,6 +2,7 @@
 #define MAP_H__
 
 #include "../include/imageMap.h"
+#include "../include/operations.h"
 
 typedef struct Node {
 	int id;
@@ -18,7 +19,7 @@ typedef struct Link {
 
 typedef struct Graph {
 	Node* nodes;
-	struct Link* links;
+	Link* links;
 } Graph;
 
 typedef struct ItdEltsInfos {

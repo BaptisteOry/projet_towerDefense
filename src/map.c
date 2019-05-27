@@ -9,6 +9,7 @@
 
 #include "../include/map.h"
 #include "../include/imageMap.h"
+#include "../include/operations.h"
 
 void itdCheck(char* itdFile, ImageMap* map, ItdEltsInfos* infos, Graph* graph) {
 
@@ -30,12 +31,17 @@ void itdCheck(char* itdFile, ImageMap* map, ItdEltsInfos* infos, Graph* graph) {
 	int nodeY;
 	int nodeLink;
 
+	char buf[100]; 
+
 	// Open .itd file
-	FILE *file;
+	FILE *file = NULL;
+
+	char fileNameItd[255]= "";
+	strcat(strcpy(fileNameItd, itdFile), ".itd");
 
 	file = fopen(itdFile, "r"); // read mode
  
-	if (file == NULL) {
+	if(file == NULL) {
 		printf("Error while opening .itd file.\n");
 	  	EXIT_FAILURE;
 	}
@@ -44,7 +50,7 @@ void itdCheck(char* itdFile, ImageMap* map, ItdEltsInfos* infos, Graph* graph) {
 
 	// Itd code check
 	fscanf(file, "%s %d", code, &version);
-	printf("%s\n", code);
+	printf("%s %d\n", code, version);
 	if(strcmp(code, "@ITD") != 0) {
 		printf("ERROR : Wrong .itd file format.\n");
 		EXIT_FAILURE;
@@ -55,17 +61,21 @@ void itdCheck(char* itdFile, ImageMap* map, ItdEltsInfos* infos, Graph* graph) {
 	}
 
 	// Read comment
-	fgets(comments, sizeof comments, file);
-	if(strcmp(&comments[0], "#")!=0) {
-		printf("Second line isn't comments.");
+	fscanf(file, "%s", comments);
+	printf("%s\n", comments);
+	if(comments[0] != 35) {
+		printf("Second line isn't comments.\n");
 		EXIT_FAILURE;
 	}
-	fputs(comments, stdout);
 
 	// Read & store variables & values
-	while(fscanf(file, "%s", keyword)) {
+	int count = 0;
+	while(count<6) {
+		fscanf(file, "%s", keyword);
+		printf("%s ", keyword);
 		if(strcmp(keyword, "carte")==0) {
 			fscanf(file, "%s", ppmFileName);
+			printf("%s\n", ppmFileName);
 		}
 		else if(strcmp(keyword, "chemin")==0 || strcmp(keyword, "noeud")==0 || strcmp(keyword, "construct")==0 || strcmp(keyword, "in")==0 || strcmp(keyword, "out")==0){
 			fscanf(file, "%d %d %d", &valueR, &valueG, &valueB);
@@ -83,56 +93,65 @@ void itdCheck(char* itdFile, ImageMap* map, ItdEltsInfos* infos, Graph* graph) {
 				printf("ERROR : Wrong pixel value(s).\n");
 				EXIT_FAILURE;
 			}
+			printf("%d %d %d\n", infos->r, infos->g, infos->b);
+			infos->nextKeyword = malloc(sizeof(ItdEltsInfos));
 			infos=infos->nextKeyword;
 		}
 		else {
 			printf("ERROR : Keyword not valid.\n");
 			EXIT_FAILURE;
 		}
+		count++;
 	}
 
 	// Read & store nodes description
 	fscanf(file, "%d", &nodesNumber);
+	printf("%d\n", nodesNumber);
 	int nodesCount = 0;
 	Node* nodes = graph->nodes;
 	Link* links = graph->links;
 
-	char EOL ='\n';
-	char buffer[20];
-	int i = 0;
 
-	while(!EOF) {
-		// Create nodes
-		nodesCount++;
-		fscanf(file, "%d %d %d %d", &nodeId, &nodeType, &nodeX, &nodeY);
-		nodes->id = nodeId;
-		nodes->type = nodeType;
-		nodes->x = nodeX;
-		nodes->y = nodeY;
-		while(buffer[i] != EOL) {
-			// Create links
-			fscanf(file, "%d", &nodeLink);
-			links->nodeId1 = nodes->id;
+	while (fgets(buf, sizeof(buf), file) != NULL && nodesCount < nodesNumber) {
+	    buf[strlen(buf) - 1] = '\0'; // eat the newline fgets() stores
+	    int nbElts = strlen(buf)/2 +1;
+
+	    //printf("%s\n", buf); // buf[i] is a character, and counts spaces
+	    sscanf(buf, "%d %d %d %d", &nodeId, &nodeType, &nodeX, &nodeY);
+	    printf("%d %d %d %d ", nodeId, nodeType, nodeX, nodeY);
+	    char* slicedBuf[strlen(buf)+1];
+	    slice_str(buf, slicedBuf, 7, strlen(buf)-1);
+	    int i=2;
+	    //printf("%s\n", slicedBuf);
+	    while(strlen(slicedBuf)>1) {
+	    	sscanf(slicedBuf, "%d", &nodeLink);
+	    	printf("%d ", nodeLink);
+	    	slice_str(buf, slicedBuf, 7+i, strlen(buf)-1);
+	    	i=i+2;
+	    	links->nodeId1 = nodes->id;
 			links->nodeId2 = nodeLink;
+			links->nextLink = malloc(sizeof(Link));
 			links = links->nextLink;
-			i++;
-		}
-		nodes=nodes->nextNode;
-
+	    }
+	    printf("\n");
+	    nodes->nextNode = malloc(sizeof(Node));
+	    nodes = nodes->nextNode;
+	    nodesCount++;
 	}
+	printf("%d\n", nodesCount);
 
 	if(nodesCount != nodesNumber) {
 		printf("ERROR : Number of nodes doesn't match nodeNumber.\n");
 		EXIT_FAILURE;
 	}
 
-
 	/* PPM MAP CHECK */
-	mapCheck(map, infos, graph);
+	//mapCheck(map, infos, graph);
 
  
  	// Close .itd file
 	fclose(file);
+	EXIT_SUCCESS;
 }
 
 void mapCheck(ImageMap* map, ItdEltsInfos* infos, Graph* graph) {

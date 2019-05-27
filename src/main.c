@@ -86,6 +86,13 @@ int main(int argc, char** argv){
     if(loadImageMapPPM(&imageMap, imageMap01) != EXIT_SUCCESS){
         return EXIT_FAILURE;
     }
+
+    // Vérification carte et itd
+    char* itdFile = "data/map01.itd";
+    ItdEltsInfos* infos = malloc(sizeof(ItdEltsInfos));
+    Graph* graph = malloc(sizeof(Graph));
+    itdCheck(itdFile, &imageMap, infos, graph);
+
     game = allocGame();
     /* Pour le temps 
     time_t rawtime;
