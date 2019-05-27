@@ -7,6 +7,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "../include/controller.h"
+#include "../include/monster.h"
 #include "../include/game.h"
 
 Game* allocGame(){
@@ -16,13 +18,26 @@ Game* allocGame(){
         exit(1);
     }
     g->money = 500;
-    g->time = 0;
+    g->nbWave = 0;
+    g->nbMonstersWave = 10;
+    g->end = 0;
 
     return g;
 }
 
-void freeGame(Game* game){
-    if(game != NULL){
-        free(game);
+void freeGame(Game* g){
+    if(g != NULL){
+        free(g);
     }
+}
+
+void addWave(Game* g, MonsterList* list){
+    Monster* tempM;
+    for (int i = 0; i < g->nbMonstersWave; i++){
+        tempM = allocMonster(randomRange(0, MNUMBER-1), -245, -75);
+        tempM->lootMultiplier += g->nbWave*0.25;
+        tempM->healthPointsMultiplier += g->nbWave*0.25;
+        addMonster(tempM, list);
+    }
+    (g->nbWave) += 1;
 }

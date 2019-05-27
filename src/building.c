@@ -12,8 +12,8 @@
 Building* allocBuilding(buildingType type, float x, float y){
     Building* b = (Building*) malloc(sizeof(Building));
     if(b == NULL) {
-		fprintf(stderr, "MEMORY ERROR\n");
-		exit(1);
+    	printf("allocBuilding : erreur d'allocation de mémoire\n");
+		exit(EXIT_FAILURE);
 	}
 
     b->type = type; // Type
@@ -40,6 +40,7 @@ Building* allocBuilding(buildingType type, float x, float y){
 			break;
 	}
 	b->size = 25;
+	b->shape = SQUARE;
 	b->next = NULL;
 
     return b;
@@ -59,47 +60,52 @@ void addBuilding(Building* b, BuildingList* list){
 
 void freeBuilding(Building* b){
 	if(b != NULL){
+		if(b->sprite){
+      		glDeleteTextures(1, &(b->sprite));
+    	}
         free(b);
     }
 }
 
-int deleteBuilding(Building* b, BuildingList* list){
-	if(b == NULL || *list == NULL){
-		return 0;
-	}
- 	BuildingList *modif = list;
-    BuildingList toDelete = *modif;
-	while(toDelete != NULL && toDelete->x != b->x && toDelete->y != b->y){
-		modif = &toDelete->next;
-		toDelete = *modif;
-	}
-	if(toDelete == NULL){
-		return 0;
-	}else{
-		*modif = toDelete->next;
-		free(toDelete);
-
-		return 1;
-	}
-}
-
-void deleteBuildings(BuildingList* list){
+void freeBuildings(BuildingList* list){
     Building *temp = *list;
     Building *next;
     while(temp != NULL){
         next = temp->next;
+        if(temp->sprite){
+      		glDeleteTextures(1, &(temp->sprite));
+    	}
         free(temp);
         temp = next;
     }
     *list = NULL;
 }
 
+void deleteBuilding(Building* b, BuildingList* list){
+	if(b != NULL && *list != NULL){
+	 	BuildingList *modif = list;
+	    BuildingList toDelete = *modif;
+		while(toDelete != NULL && toDelete->x != b->x && toDelete->y != b->y){
+			modif = &toDelete->next;
+			toDelete = *modif;
+		}
+		if(toDelete != NULL){
+			*modif = toDelete->next;
+			if(toDelete->sprite){
+	      		glDeleteTextures(1, &(toDelete->sprite));
+	    	}
+			free(toDelete);
+		}
+	}
+}
+
 void drawBuildings(BuildingList list){
     while(list != NULL){
 		glPushMatrix();
 			glTranslatef(list->x, list->y, 0);
-			drawSquare(list->r, list->g, list->b, 255, list->size);
-			drawPicture(list->sprite, list->size, list->size); // Taille tour
+			glScalef(list->size, list->size, 0);
+			drawSquare(list->r, list->g, list->b, 255);
+			drawPicture(list->sprite);
 		glPopMatrix();
 
         list = list->next;
@@ -110,11 +116,18 @@ void drawRangeBuildings(BuildingList list){
     while(list != NULL){
 		glPushMatrix();
 			glTranslatef(list->x, list->y, 0);
-			drawCircle(list->r, list->g, list->b, 40, list->range);
+			glScalef(list->range, list->range, 0);
+			drawCircle(list->r, list->g, list->b, 40);
 		glPopMatrix();
 
         list = list->next;
     }
+}
+
+void drawInfosBuilding(Building* b, char* infosConstructions){
+	if(b != NULL){
+		sprintf(infosConstructions, "Cout : %d\nPortee : %d\n", b->cost, b->range);
+	}
 }
 
 Building* buildingSelected(BuildingList list, float x, float y){
