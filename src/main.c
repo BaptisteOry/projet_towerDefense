@@ -91,7 +91,7 @@ int main(int argc, char** argv){
     char* itdFile = "data/map01.itd";
     ItdEltsInfos* infos = malloc(sizeof(ItdEltsInfos));
     Graph* graph = malloc(sizeof(Graph));
-    printMapData(&imageMap);
+    //printMapData(&imageMap);
     itdCheck(itdFile, &imageMap, infos, graph);
 
     // Affiche les informations enregistrées (à titre de test)

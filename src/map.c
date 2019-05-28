@@ -240,9 +240,9 @@ void testNodeOnMap(int r, int g, int b, Node* node, ImageMap* map) {
 	int x = node->x;
 	int y = node->y;
 	printf("%d, %d\n", x, y);
-	printf("%d\n", y*map->width + x*3);
-	printf("%d %d %d\n", (map->data)[y*map->width + x*3], (map->data)[y*map->width + x*3+1], (map->data)[y*map->width + x*3+2]);
-	if((map->data)[y*map->width + x*3] != r || (map->data)[y*map->width + x*3 +1] != g || (map->data)[y*map->width + x*3 +2] != b) {
+	printf("%d\n", y*map->width*3 + x*3);
+	printf("%d %d %d\n", (map->data)[y*map->width*3 + x*3], (map->data)[y*map->width*3 + x*3+1], (map->data)[y*map->width*3 + x*3+2]);
+	if((map->data)[y*map->width*3 + x*3] != r || (map->data)[y*map->width*3 + x*3 +1] != g || (map->data)[y*map->width*3 + x*3 +2] != b) {
 		printf("ERROR : %d node not in right place.\n", node->id);
 		EXIT_FAILURE;
 	}
@@ -309,7 +309,7 @@ void testLectureItd(ItdEltsInfos* infos, Graph* graph) {
 
 void printMapData(ImageMap* map) {
 	printf("Map data:\n");
-	for(int i=0; i<map->width*map->height; i++) {
+	for(int i=0; i<map->width*map->height*3; i++) {
 		printf("%d : %d\n", i, map->data[i]);
 	}
 	printf("\n");
