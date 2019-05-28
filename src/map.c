@@ -69,6 +69,7 @@ void itdCheck(char* itdFile, ImageMap* map, ItdEltsInfos* infos, Graph* graph) {
 	}
 
 	// Read & store variables & values
+	ItdEltsInfos* infosTemp = infos;
 	int count = 0;
 	while(count<6) {
 		fscanf(file, "%s", keyword);
@@ -79,23 +80,23 @@ void itdCheck(char* itdFile, ImageMap* map, ItdEltsInfos* infos, Graph* graph) {
 		}
 		else if(strcmp(keyword, "chemin")==0 || strcmp(keyword, "noeud")==0 || strcmp(keyword, "construct")==0 || strcmp(keyword, "in")==0 || strcmp(keyword, "out")==0){
 			fscanf(file, "%d %d %d", &valueR, &valueG, &valueB);
-			*(infos->keyword)=*keyword;
+			strcpy(infosTemp->keyword, keyword);
 			if(testPixel(valueR)==0) {
-				infos->r=valueR;
+				infosTemp->r=valueR;
 			}
 			if(testPixel(valueG)==0) {
-				infos->g=valueG;
+				infosTemp->g=valueG;
 			}
 			if(testPixel(valueB)==0) {
-				infos->b=valueB;
+				infosTemp->b=valueB;
 			}
 			else if (testPixel(valueR)!=1 || testPixel(valueG)!=1 || testPixel(valueB)!=1) {
 				printf("ERROR : Wrong pixel value(s).\n");
 				EXIT_FAILURE;
 			}
-			printf("%d %d %d\n", infos->r, infos->g, infos->b);
-			infos->nextKeyword = malloc(sizeof(ItdEltsInfos));
-			infos=infos->nextKeyword;
+			printf("%d %d %d\n", infosTemp->r, infosTemp->g, infosTemp->b);
+			infosTemp->nextKeyword = malloc(sizeof(infosTemp));
+			infosTemp=infosTemp->nextKeyword;
 		}
 		else {
 			printf("ERROR : Keyword not valid.\n");
@@ -103,6 +104,7 @@ void itdCheck(char* itdFile, ImageMap* map, ItdEltsInfos* infos, Graph* graph) {
 		}
 		count++;
 	}
+	infosTemp = NULL;
 
 	// Read & store nodes description
 	fscanf(file, "%d", &nodesNumber);
@@ -125,8 +127,10 @@ void itdCheck(char* itdFile, ImageMap* map, ItdEltsInfos* infos, Graph* graph) {
 	    buf[strlen(buf) - 1] = '\0'; // eat the newline fgets() stores
 
 	    //printf("%s\n", buf); // buf[i] is a character, and counts spaces
-	    sscanf(buf, "%d %d %d %d", &nodeId, &nodeType, &nodeX, &nodeY);
-	    printf("%d %d %d %d ", nodeId, nodeType, nodeX, nodeY);
+	    //sscanf(buf, "%d %d %d %d", &nodeId, &nodeType, &nodeX, &nodeY);
+	    //printf("%d %d %d %d ", nodeId, nodeType, nodeX, nodeY);
+	    sscanf(buf, "%d %d %d %d", &nodes->id, &nodes->type, &nodes->x, &nodes->y);
+	    printf("%d %d %d %d ", nodes->id, nodes->type, nodes->x, nodes->y);
 	    char* slicedBuf[strlen(buf)+1];
 	    slice_str(buf, slicedBuf, 7, strlen(buf)-1);
 	    int i=2;
@@ -136,20 +140,22 @@ void itdCheck(char* itdFile, ImageMap* map, ItdEltsInfos* infos, Graph* graph) {
 	    	printf("%d ", nodeLink);
 	    	slice_str(buf, slicedBuf, 7+i, strlen(buf)-1);
 	    	i=i+2;
-	    	links->nodeId1 = nodeId;
+	    	links->nodeId1 = nodes->id;
 			links->nodeId2 = nodeLink;
 			links->nextLink = malloc(sizeof(Link));
 			links = links->nextLink;
 	    }
 	    printf("\n");
-	    nodes->id = nodeId;
+	    /*nodes->id = nodeId;
 	    nodes->type = nodeType;
 	    nodes->x = nodeX;
-	    nodes->y = nodeY;
+	    nodes->y = nodeY;*/
 	    nodes->nextNode = malloc(sizeof(Node));
 	    nodes = nodes->nextNode;
 	    nodesCount++;
 	}
+	links = NULL;
+	nodes = NULL;
 	printf("%d\n", nodesCount);
 
 	if(nodesCount != nodesNumber) {
@@ -158,8 +164,7 @@ void itdCheck(char* itdFile, ImageMap* map, ItdEltsInfos* infos, Graph* graph) {
 	}
 
 	/* PPM MAP CHECK */
-	//mapCheck(map, infos, graph);
-
+	mapCheck(map, infos, graph);
  
  	// Close .itd file
 	fclose(file);
@@ -176,6 +181,7 @@ void mapCheck(ImageMap* map, ItdEltsInfos* infos, Graph* graph) {
 			while(strcmp(tempInfo->keyword, "in")!=0) {
 				tempInfo=tempInfo->nextKeyword;
 			}
+			printf("%s %d %d %d\n", tempInfo->keyword, tempInfo->r, tempInfo->g, tempInfo->b);
 			testNodeOnMap(tempInfo->r, tempInfo->g, tempInfo->b, tempNode, map);
 			tempInfo = infos;
 		}
@@ -193,6 +199,7 @@ void mapCheck(ImageMap* map, ItdEltsInfos* infos, Graph* graph) {
 			testNodeOnMap(tempInfo->r, tempInfo->g, tempInfo->b, tempNode, map);
 			tempInfo = infos;
 		}
+		tempNode=tempNode->nextNode;
 	}
 
 	// Check other pixels
@@ -232,8 +239,11 @@ void mapCheck(ImageMap* map, ItdEltsInfos* infos, Graph* graph) {
 void testNodeOnMap(int r, int g, int b, Node* node, ImageMap* map) {
 	int x = node->x;
 	int y = node->y;
+	printf("%d, %d\n", x, y);
+	printf("%d\n", y*map->width + x*3);
+	printf("%d %d %d\n", (map->data)[y*map->width + x*3], (map->data)[y*map->width + x*3+1], (map->data)[y*map->width + x*3+2]);
 	if((map->data)[y*map->width + x*3] != r || (map->data)[y*map->width + x*3 +1] != g || (map->data)[y*map->width + x*3 +2] != b) {
-		printf("ERROR : %d node not in wright place.\n", node->id);
+		printf("ERROR : %d node not in right place.\n", node->id);
 		EXIT_FAILURE;
 	}
 
@@ -278,3 +288,29 @@ void testIfPath(int dataIndex, Graph* graph, ImageMap* map) {
 /*void createGraph(Graph* graph) {
 
 }*/
+
+void testLectureItd(ItdEltsInfos* infos, Graph* graph) {
+	ItdEltsInfos* infosTemp = infos;
+	Node* nodesTemp = graph->nodes;
+	Link* linksTemp = graph->links;
+	while(infosTemp != NULL) {
+		printf("%s %d %d %d\n", infosTemp->keyword, infosTemp->r, infosTemp->g, infosTemp->b);
+		infosTemp = infosTemp->nextKeyword;
+	}
+	while(nodesTemp != NULL) {
+		printf("%d %d %d %d\n", nodesTemp->id, nodesTemp->type, nodesTemp->x, nodesTemp->y);
+		nodesTemp = nodesTemp->nextNode;
+	}
+	while(linksTemp !=NULL) {
+		printf("%d %d\n", linksTemp->nodeId1, linksTemp->nodeId2);
+		linksTemp = linksTemp->nextLink;
+	}
+}
+
+void printMapData(ImageMap* map) {
+	printf("Map data:\n");
+	for(int i=0; i<map->width*map->height; i++) {
+		printf("%d : %d\n", i, map->data[i]);
+	}
+	printf("\n");
+}

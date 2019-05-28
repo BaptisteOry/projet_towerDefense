@@ -38,4 +38,8 @@ void testNodeOnMap(int r, int g, int b, Node* node, ImageMap* map);
 
 void testIfPath(int dataIndex, Graph* graph, ImageMap* map);
 
+void testLectureItd(ItdEltsInfos* infos, Graph* graph);
+
+void printMapData(ImageMap* map);
+
 #endif

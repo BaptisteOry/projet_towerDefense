@@ -86,14 +86,19 @@ int main(int argc, char** argv){
 
     // Charger image ppm (placer dans l'image carte)
     loadImageMapPPM(&imageMap, imageMap01);
-    // Créer un nouveau jeu
 
     // Vérification carte et itd
     char* itdFile = "data/map01.itd";
     ItdEltsInfos* infos = malloc(sizeof(ItdEltsInfos));
     Graph* graph = malloc(sizeof(Graph));
+    printMapData(&imageMap);
     itdCheck(itdFile, &imageMap, infos, graph);
 
+    // Affiche les informations enregistrées (à titre de test)
+    /*printf("Test test\n");
+    testLectureItd(infos, graph);*/
+
+    // Créer un nouveau jeu
     game = allocGame();
 
     /* Boucle principale */
