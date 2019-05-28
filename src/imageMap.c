@@ -72,7 +72,16 @@ void loadImageMapPPM(ImageMap* imageMap, char *fileName){
   newImageMap(imageMap, width, height, fileName);
 
   // Lire les données
-  fread(imageMap->data, sizeof(unsigned char), width*height*3, myFile);
+  imageMap->data = malloc(width*height*3*sizeof(unsigned char));
+  if(imageMap->data == NULL){
+    printf("newImageMap : erreur d'allocation de mémoire\n");
+    exit(EXIT_FAILURE);
+  }
+  for (int i=0; i<width*height*3; i++){
+    if (fscanf(myFile, "%hhu", (imageMap->data)+i) != 1) {
+      printf("newImageMap : ne peut pas lire le fichier ppm %s, composantes RGB invalides\n", fileName);
+    }
+  }
 
   // Fermer fichier
   fclose(myFile);

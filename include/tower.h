@@ -1,6 +1,5 @@
 #ifndef TOWER_H__
-#define TOWER_H__
-
+#define TOWER_H_
 /// \enumeration types de tours
 typedef enum{
 	TRED, TGREEN, TYELLOW, TBLUE
