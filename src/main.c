@@ -93,16 +93,14 @@ int main(int argc, char** argv){
     Node* nodes = NULL;
     Link* links = NULL;
     //printMapData(&imageMap);
-    itdCheck(itdFile, &imageMap, infos, nodes, links);
-
-    //printf("%d\n", nodes->x);
+    itdCheck(itdFile, &imageMap, &infos, &nodes, &links);
 
     // Vérification du ppm
     mapCheck(&imageMap, infos, nodes);
 
     // Affiche les informations enregistrées (à titre de test)
-    /*printf("Test test\n");
-    testLectureItd(infos, graph);*/
+    printf("Test test\n");
+    //testLectureItd(infos, nodes, links);
 
     // Créer un nouveau jeu
     game = allocGame();

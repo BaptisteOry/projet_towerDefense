@@ -29,7 +29,7 @@ typedef struct ItdEltsInfos {
 } ItdEltsInfos, *InfosList;
 
 
-void itdCheck(char* itdFile, ImageMap* map, ItdEltsInfos* infos, Node* nodes, Link* links);
+void itdCheck(char* itdFile, ImageMap* map, ItdEltsInfos** infos, Node** nodes, Link** links);
 
 // Verifies if the .itd file corresponds to the map
 void mapCheck(ImageMap* map, ItdEltsInfos* infos, Node* nodes);
@@ -38,7 +38,7 @@ void testNodeOnMap(int r, int g, int b, Node* node, ImageMap* map);
 
 void testIfPath(int dataIndex, Node* nodes, ImageMap* map);
 
-void testLectureItd(ItdEltsInfos* infos, Graph* graph);
+void testLectureItd(ItdEltsInfos* infos, Node* nodes, Link* links);
 
 void printMapData(ImageMap* map);
 

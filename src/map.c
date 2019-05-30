@@ -11,7 +11,7 @@
 #include "../include/imageMap.h"
 #include "../include/operations.h"
 
-void itdCheck(char* itdFile, ImageMap* map, ItdEltsInfos* infos, Node* nodes, Link* links) {
+void itdCheck(char* itdFile, ImageMap* map, ItdEltsInfos** infos, Node** nodes, Link** links) {
 
 	// ITD file elements
 	char code[5];
@@ -96,7 +96,7 @@ void itdCheck(char* itdFile, ImageMap* map, ItdEltsInfos* infos, Node* nodes, Li
 			}
 			ItdEltsInfos* infoTemp = allocInfo(keyword, valueR, valueG, valueB);
 			printf("%d %d %d\n", infoTemp->r, infoTemp->g, infoTemp->b);
-			addInfo(infoTemp, &infos);
+			addInfo(infoTemp, infos);
 			/*infosTemp->nextKeyword = malloc(sizeof(infosTemp));
 			infosTemp=infosTemp->nextKeyword;*/
 		}
@@ -143,7 +143,7 @@ void itdCheck(char* itdFile, ImageMap* map, ItdEltsInfos* infos, Node* nodes, Li
 	    	slice_str(buf, slicedBuf, 7+i, strlen(buf)-1);
 	    	i=i+2;
 	    	Link* linkTemp = allocLink(nodeId, nodeLink);
-	    	addLink(linkTemp, &links);
+	    	addLink(linkTemp, links);
 	    	//links->nodeId1 = nodes->id;
 			//links->nodeId2 = nodeLink;
 			//links->nextLink = malloc(sizeof(Link));
@@ -155,7 +155,7 @@ void itdCheck(char* itdFile, ImageMap* map, ItdEltsInfos* infos, Node* nodes, Li
 	    //nodes->x = nodeX;
 	    //nodes->y = nodeY;
 	    Node* nodeTemp = allocNode(nodeId, nodeType, nodeX, nodeY);
-	    addNode(nodeTemp, &nodes);
+	    addNode(nodeTemp, nodes);
 	    //nodes->nextNode = malloc(sizeof(Node));
 	    //nodes = nodes->nextNode;
 	    nodesCount++;
@@ -197,24 +197,29 @@ void mapCheck(ImageMap* map, ItdEltsInfos* infos, Node* nodes) {
 			testNodeOnMap(tempInfo->r, tempInfo->g, tempInfo->b, tempNode, map);
 		}
 		else if(tempNode->type == 3 || tempNode->type == 4) {
-			while(strcmp(tempInfo->keyword, "node")!=0) {
+			while(strcmp(tempInfo->keyword, "noeud")!=0) {
 				tempInfo=tempInfo->nextKeyword;
 			}
 			printf("%s %d %d %d\n", tempInfo->keyword, tempInfo->r, tempInfo->g, tempInfo->b);
 			testNodeOnMap(tempInfo->r, tempInfo->g, tempInfo->b, tempNode, map);
 		}
+		else {
+			printf("Error in node, impossible to test color.\n");
+			EXIT_FAILURE;
+		}
 		tempNode=tempNode->nextNode;
 	}
 
 	// Check other pixels
-	/*ItdEltsInfos* tempInfo = infos;
+	ItdEltsInfos* tempInfo = infos;
 	while(strcmp(tempInfo->keyword, "construct")!=0) {
 		tempInfo = tempInfo->nextKeyword;
 	}
-	tempInfo = infos;
 	int r = tempInfo->r;
 	int g = tempInfo->g;
 	int b = tempInfo->b;
+	printf("test construct %d %d %d\n", r, g, b);
+	tempInfo = infos;
 
 	while(strcmp(tempInfo->keyword, "chemin")!=0) {
 		tempInfo=tempInfo->nextKeyword;
@@ -222,6 +227,7 @@ void mapCheck(ImageMap* map, ItdEltsInfos* infos, Node* nodes) {
 	int pathR = tempInfo->r;
 	int pathG = tempInfo->g;
 	int pathB = tempInfo->b;
+	printf("test chemmin %d %d %d\n", pathR, pathG, pathB);
 
 	for(int i = 0; i<(map->height)*(map->width); i=i+3) {
 		int R = map->data[i];
@@ -233,10 +239,14 @@ void mapCheck(ImageMap* map, ItdEltsInfos* infos, Node* nodes) {
 			}
 			else {
 				//tester si noeud (= si le x et le y correspondent a un noeud dans la liste) sinon erreur
-				printf("ERROR : Pixel color doesn't match anything.");
+				printf("ERROR : Pixel color doesn't match anything.\n");
+				printf("%d : %d, %d : %d, %d : %d\n", i, R, i+1, G, i+2, B);
 			}
 		}
-	}*/
+		else {
+			printf("This pixel is on a construction zone, where it should be <3.\n");
+		}
+	}
 
 }
 
@@ -244,8 +254,8 @@ void mapCheck(ImageMap* map, ItdEltsInfos* infos, Node* nodes) {
 void testNodeOnMap(int r, int g, int b, Node* node, ImageMap* map) {
 	int x = node->x;
 	int y = node->y;
-	printf("%d, %d\n", x, y);
-	printf("%d\n", y*map->width*3 + x*3);
+	//printf("%d, %d\n", x, y);
+	//printf("%d\n", y*map->width*3 + x*3);
 	printf("%d %d %d\n", (map->data)[y*map->width*3 + x*3], (map->data)[y*map->width*3 + x*3+1], (map->data)[y*map->width*3 + x*3+2]);
 	if((map->data)[y*map->width*3 + x*3] != r || (map->data)[y*map->width*3 + x*3 +1] != g || (map->data)[y*map->width*3 + x*3 +2] != b) {
 		printf("ERROR : %d node not in right place.\n", node->id);
@@ -294,10 +304,10 @@ void testIfPath(int dataIndex, Node* nodes, ImageMap* map) {
 
 }*/
 
-void testLectureItd(ItdEltsInfos* infos, Graph* graph) {
+void testLectureItd(ItdEltsInfos* infos, Node* nodes, Link* links) {
 	ItdEltsInfos* infosTemp = infos;
-	Node* nodesTemp = graph->nodes;
-	Link* linksTemp = graph->links;
+	Node* nodesTemp = nodes;
+	Link* linksTemp = links;
 	while(infosTemp != NULL) {
 		printf("%s %d %d %d\n", infosTemp->keyword, infosTemp->r, infosTemp->g, infosTemp->b);
 		infosTemp = infosTemp->nextKeyword;
