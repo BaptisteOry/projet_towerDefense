@@ -89,10 +89,16 @@ int main(int argc, char** argv){
 
     // Vérification carte et itd
     char* itdFile = "data/map01.itd";
-    ItdEltsInfos* infos = malloc(sizeof(ItdEltsInfos));
-    Graph* graph = malloc(sizeof(Graph));
+    ItdEltsInfos* infos = NULL;
+    Node* nodes = NULL;
+    Link* links = NULL;
     //printMapData(&imageMap);
-    itdCheck(itdFile, &imageMap, infos, graph);
+    itdCheck(itdFile, &imageMap, infos, nodes, links);
+
+    //printf("%d\n", nodes->x);
+
+    // Vérification du ppm
+    mapCheck(&imageMap, infos, nodes);
 
     // Affiche les informations enregistrées (à titre de test)
     /*printf("Test test\n");
