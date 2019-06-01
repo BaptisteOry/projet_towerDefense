@@ -95,6 +95,12 @@ int main(int argc, char** argv){
     //printMapData(&imageMap);
     itdCheck(itdFile, &imageMap, &infos, &nodes, &links);
 
+    
+    createLinkedNodeList(nodes, links);
+
+    //printf("test liens\n");
+    //testlinks(nodes);
+
     // Vérification du ppm
     mapCheck(&imageMap, infos, nodes);
 

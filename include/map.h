@@ -36,7 +36,9 @@ void mapCheck(ImageMap* map, ItdEltsInfos* infos, Node* nodes);
 
 void testNodeOnMap(int r, int g, int b, Node* node, ImageMap* map);
 
-void testIfPath(int dataIndex, Node* nodes, ImageMap* map);
+int testIfPath(int dataIndex, Node* nodes, ImageMap* map);
+
+int testIfNode(int dataIndex, Node* nodes, ImageMap* map);
 
 void testLectureItd(ItdEltsInfos* infos, Node* nodes, Link* links);
 
@@ -53,5 +55,9 @@ void addNode(Node* node, NodeList* list);
 Link* allocLink(int id1, int id2);
 
 void addLink(Link* link, LinkList* list);
+
+void createLinkedNodeList(Node* nodes, Link* links);
+
+void testlinks(Node* nodes);
 
 #endif

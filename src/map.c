@@ -229,18 +229,24 @@ void mapCheck(ImageMap* map, ItdEltsInfos* infos, Node* nodes) {
 	int pathB = tempInfo->b;
 	printf("test chemmin %d %d %d\n", pathR, pathG, pathB);
 
-	for(int i = 0; i<(map->height)*(map->width); i=i+3) {
+	for(int i = 0; i<(map->height)*(map->width)*3; i=i+3) {
 		int R = map->data[i];
 		int G = map->data[i+1];
 		int B = map->data[i+2];
 		if(R != r || G != g || B != b) {
 			if((R == pathR) && (G == pathG) && (B == pathB)) {
-				testIfPath(i, nodes, map);
+				if(testIfPath(i, nodes, map)==1) {
+					printf("ERROR : Pixel should be on a path.\n");
+					EXIT_FAILURE;
+				}
 			}
 			else {
 				//tester si noeud (= si le x et le y correspondent a un noeud dans la liste) sinon erreur
-				printf("ERROR : Pixel color doesn't match anything.\n");
-				printf("%d : %d, %d : %d, %d : %d\n", i, R, i+1, G, i+2, B);
+				if(testIfNode(i, nodes, map)==1) {
+					printf("ERROR : Pixel color doesn't match anything.\n");
+					EXIT_FAILURE;
+				}
+				//printf("%d : %d, %d : %d, %d : %d\n", i, R, i+1, G, i+2, B);
 			}
 		}
 		else {
@@ -264,31 +270,36 @@ void testNodeOnMap(int r, int g, int b, Node* node, ImageMap* map) {
 	printf("Pixel in right place.\n");
 }
 
-void testIfPath(int dataIndex, Node* nodes, ImageMap* map) {
+int testIfPath(int dataIndex, Node* nodes, ImageMap* map) {
 	// Check if dataIndex is between two nodes
-	int x = dataIndex%map->width;
-	int y = dataIndex/map->width;
+	int x = dataIndex%(map->width*3)/3;
+	int y = dataIndex/(map->width*3);
+	//printf("x : %d, y : %d\n", x, y);
 	Node* tempNode = nodes;
 	while(tempNode != NULL) {
 		if(tempNode->x == x) {
+			//printf("test X\n");
 			Node* linkedNode = tempNode->linkedNodes;
 			while(linkedNode != NULL) {
 				if(linkedNode->x == x) {
+					//printf("oui\n");
 					if((tempNode->y < y && linkedNode->y > y) || (tempNode->y > y && linkedNode->y < y)) {
-						printf("This pixel in a on a path.");
-						EXIT_SUCCESS;
+						printf("This pixel is a on a path.\n");
+						return 0;
 					}
 				}
 				linkedNode = linkedNode->nextNode;	
 			}
 		}
 		if(tempNode->y == y) {
+			//printf("test Y\n");
 			Node* linkedNode = tempNode->linkedNodes;
 			while(linkedNode != NULL) {
 				if(linkedNode->y == y) {
+					//printf("euh oui\n");
 					if((tempNode->x < x && linkedNode->x > x) || (tempNode->x > x && linkedNode->x < x)) {
-						printf("This pixel in a on a path.\n");
-						EXIT_SUCCESS;
+						printf("This pixel is a on a path.\n");
+						return 0;
 					}
 				}
 				linkedNode = linkedNode->nextNode;	
@@ -297,12 +308,22 @@ void testIfPath(int dataIndex, Node* nodes, ImageMap* map) {
 		tempNode = tempNode->nextNode;
 	}
 	printf("This pixel is not on a path but should be.\n");
-	EXIT_FAILURE;
+	return 1;
 }
 
-/*void createGraph(Graph* graph) {
-
-}*/
+int testIfNode(int dataIndex, Node* nodes, ImageMap* map) {
+	int x = dataIndex%(map->width*3)/3;
+	int y = dataIndex/(map->width*3);
+	Node* tempNode = nodes;
+	while(tempNode != NULL) {
+		if(tempNode->x == x && tempNode->y == y) {
+			printf("This pixel is a node.\n");
+			return 0;
+		}
+		tempNode = tempNode->nextNode;
+	}
+	return 1;
+}
 
 void testLectureItd(ItdEltsInfos* infos, Node* nodes, Link* links) {
 	ItdEltsInfos* infosTemp = infos;
@@ -405,4 +426,41 @@ void addLink(Link* link, LinkList* list){
         }
         temp->nextLink = link;
     }
+}
+
+void createLinkedNodeList(Node* nodes, Link* links) {
+	//printf("createLinkedNodeList\n");
+	Node* tempNode = nodes;
+	Link* tempLink = links;
+	while(tempNode != NULL) {
+		//printf("node %d\n", tempNode->id);
+		while(tempLink != NULL && (tempLink->nodeId1 == tempNode->id)) {
+			//printf("links list %d %d\n", tempLink->nodeId1, tempLink->nodeId2);
+			//printf("oui\n");
+			Node* temp = nodes;
+			while((temp != NULL) && (temp->id != tempLink->nodeId2)) {
+				temp = temp->nextNode;
+			}
+			//printf("node linked %d\n", temp->id);
+			Node* node = allocNode(temp->id, temp->type, temp->x, temp->y);
+			//printf("test node %d %d %d %d\n", node->id, node->type, node->x, node->y);
+			addNode(node, &(tempNode->linkedNodes));
+			tempLink=tempLink->nextLink;
+		}
+		//printf("non\n");
+		tempNode = tempNode->nextNode;
+	}
+}
+
+void testlinks(Node* nodes) {
+	Node* temp = nodes;
+	while(temp != NULL) {
+		printf("node : %d\n", temp->id);
+		Node* link = nodes->linkedNodes;
+		while(link != NULL) {
+			printf("%d\n", link->id);
+			link = link->nextNode;
+		}
+		temp = temp->nextNode;
+	}
 }
