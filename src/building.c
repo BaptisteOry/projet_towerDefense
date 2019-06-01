@@ -2,12 +2,29 @@
 #include <SDL/SDL_image.h>
 #include <GL/gl.h>
 #include <GL/glu.h>
+#include <GL/glut.h> 
+#include <math.h>
 
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "../include/controller.h"
+#include "../include/display.h"
+#include "../include/operations.h"
 #include "../include/building.h"
+
+const char* getBuildingTypeName(buildingType bt){
+   switch (bt){
+    	case RADAR: return "Radar";
+      		break;
+    	case FACTORY: return "Usine";
+      		break;
+    	case STOCK: return "Stock";
+      		break;
+      	default:
+			break;
+   }
+   return 0;
+}
 
 Building* allocBuilding(buildingType type, float x, float y){
     Building* b = (Building*) malloc(sizeof(Building));
@@ -23,18 +40,18 @@ Building* allocBuilding(buildingType type, float x, float y){
 	switch(type){
 		case RADAR :
 			b->cost = 100;
-			b->r = 0; b->g = 0; b->b = 0;
-			b->sprite = loadTexture("images/building_1.png");
+			b->r = 255; b->g = 236; b->b = 180;
+			b->sprite = loadTexture("images/building_radar.png");
 			break;
 		case FACTORY:
 			b->cost = 50;
-			b->r = 128; b->g = 128; b->b = 128;
-			b->sprite = loadTexture("images/building_1.png");
+			b->r = 135; b->g = 108; b->b = 80;
+			b->sprite = loadTexture("images/building_factory.png");
 			break;
 		case STOCK:
 			b->cost = 25;
-			b->r = 255; b->g = 255; b->b = 255;
-			b->sprite = loadTexture("images/building_1.png");
+			b->r = 229; b->g = 119; b->b = 1;
+			b->sprite = loadTexture("images/building_stock.png");
 			break;
 		default:
 			break;
@@ -104,7 +121,6 @@ void drawBuildings(BuildingList list){
 		glPushMatrix();
 			glTranslatef(list->x, list->y, 0);
 			glScalef(list->size, list->size, 0);
-			drawSquare(list->r, list->g, list->b, 255);
 			drawPicture(list->sprite);
 		glPopMatrix();
 
@@ -117,7 +133,7 @@ void drawRangeBuildings(BuildingList list){
 		glPushMatrix();
 			glTranslatef(list->x, list->y, 0);
 			glScalef(list->range, list->range, 0);
-			drawCircle(list->r, list->g, list->b, 40);
+			drawCircle(list->r, list->g, list->b, 75);
 		glPopMatrix();
 
         list = list->next;
@@ -126,7 +142,7 @@ void drawRangeBuildings(BuildingList list){
 
 void drawInfosBuilding(Building* b, char* infosConstructions){
 	if(b != NULL){
-		sprintf(infosConstructions, "Cout : %d\nPortee : %d\n", b->cost, b->range);
+		sprintf(infosConstructions, "Type : %s\nCout : %d\nPortee : %d\n", getBuildingTypeName(b->type), b->cost, b->range);
 	}
 }
 

@@ -2,12 +2,31 @@
 #include <SDL/SDL_image.h>
 #include <GL/gl.h>
 #include <GL/glu.h>
+#include <GL/glut.h> 
+#include <math.h>
 
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "../include/controller.h"
+#include "../include/display.h"
+#include "../include/operations.h"
 #include "../include/tower.h"
+
+const char* getTowerTypeName(towerType tt){
+   switch (tt){
+    	case TRED: return "Tour rouge";
+      		break;
+    	case TPURPLE: return "Tour violette";
+      		break;
+    	case TYELLOW: return "Tour jaune";
+      		break;
+      	case TBLUE: return "Tour bleue";
+      		break;
+      	default:
+			break;
+   }
+   return 0;
+}
 
 Tower* allocTower(towerType type, float x, float y){
     Tower* t = (Tower*) malloc(sizeof(Tower));
@@ -28,32 +47,32 @@ Tower* allocTower(towerType type, float x, float y){
 			t->range= 135;
 			t->rate = 10; //every second
 			t->cost = 50;
-			t->r = 255; t->g = 0; t->b = 0;
-			t->sprite = loadTexture("images/tower_1.png");
+			t->r = 217; t->g = 55; t->b = 30;
+			t->sprite = loadTexture("images/tower_red.png");
 			break;
-		case TGREEN:
+		case TPURPLE:
 			t->power = 50;
 			t->range= 110;
 			t->rate = 85; //every 200ms
 			t->cost = 40;
-			t->r = 0; t->g = 255; t->b = 0;
-			t->sprite = loadTexture("images/tower_2.png");
+			t->r = 130; t->g = 78; t->b = 139;
+			t->sprite = loadTexture("images/tower_purple.png");
 			break;
 		case TYELLOW:
 			t->power = 30;
 			t->range= 95;
 			t->rate = 30; //every 600ms
 			t->cost = 30;
-			t->r = 255; t->g = 255; t->b = 0;
-			t->sprite = loadTexture("images/tower_3.png");
+			t->r = 249; t->g = 171; t->b = 60;
+			t->sprite = loadTexture("images/tower_yellow.png");
 			break;
 		case TBLUE:
 			t->power = 30;
 			t->range= 80;
 			t->rate = 30; //every 400ms
 			t->cost = 20;
-			t->r = 0; t->g = 0; t->b = 255;
-			t->sprite = loadTexture("images/tower_4.png");
+			t->r = 43; t->g = 117; t->b = 140;
+			t->sprite = loadTexture("images/tower_blue.png");
 			break;
 		default:
 			break;
@@ -125,7 +144,6 @@ void drawTowers(TowerList list){
 		glPushMatrix();
 			glTranslatef(list->x, list->y, 0);
 			glScalef(list->size, list->size, 0);
-			drawCircle(list->r, list->g, list->b, 255);
 			drawPicture(list->sprite);
 		glPopMatrix();
 
@@ -133,12 +151,21 @@ void drawTowers(TowerList list){
     }
 }
 
+void drawTower(Tower* t){
+    glPushMatrix();
+		glTranslatef(t->x, t->y, 0);
+		glScalef(t->size, t->size, 0);
+		drawCircle(t->r, t->g, t->b, 255);
+		drawPicture(t->sprite);
+	glPopMatrix();
+}
+
 void drawRangeTowers(TowerList list){
     while(list != NULL){
 		glPushMatrix();
 			glTranslatef(list->x, list->y, 0);
 			glScalef((list->range)*(list->rangeMultiplier), (list->range)*(list->rangeMultiplier), 0);
-			drawCircle(list->r, list->g, list->b, 40);
+			drawCircle(list->r, list->g, list->b, 75);
 		glPopMatrix();
 
         list = list->next;
@@ -147,7 +174,7 @@ void drawRangeTowers(TowerList list){
 
 void drawInfosTower(Tower* t, char* infosConstructions){
 	if(t != NULL){
-		sprintf(infosConstructions, "Cout : %d\nPuissance : %d\nPortee : %d\nCadence : %d\n", t->cost, (int)(t->power*t->powerMultiplier), (int)(t->range*t->rangeMultiplier), (int)(t->rate*t->rateMultiplier));
+		sprintf(infosConstructions, "Type : %s\nCout : %d\nPuissance : %d\nPortee : %d\nCadence : %d\n", getTowerTypeName(t->type), t->cost, (int)(t->power*t->powerMultiplier), (int)(t->range*t->rangeMultiplier), (int)(t->rate*t->rateMultiplier));
 	}
 }
 
