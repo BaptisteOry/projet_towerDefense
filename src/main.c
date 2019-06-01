@@ -211,7 +211,8 @@ int main(int argc, char** argv){
                             }else if(buildingToBuild != -1){
                                 tempB = allocBuilding(buildingToBuild, x, y);
                                 if(!(constructionIntersection(buildings, towers, tempB->x, tempB->y, tempB->size, tempB->shape)) 
-                                   && (tempB->cost <= game->money)){
+                                   && (tempB->cost <= game->money)
+                                   && (doesCircleIntersectsPath(e.button.x, e.button.y, tempB->size, nodes, WINDOW_WIDTH, WINDOW_HEIGHT) == 0)){
                                     addBuilding(tempB, &buildings);
                                     giveBonusTowers(tempB, &towers);
                                     game->money -= tempB->cost;
