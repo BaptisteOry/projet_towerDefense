@@ -465,3 +465,42 @@ void testlinks(Node* nodes) {
 		temp = temp->nextNode;
 	}
 }
+
+int doesCircleIntersectsPath(float x, float y, int size, Node* nodes, unsigned int WINDOW_WIDTH, unsigned int WINDOW_HEIGHT) {
+    printf("oui\n");
+    Node* temp = nodes;
+    float X = 10*x/WINDOW_WIDTH-0.5;
+    float Y = 6*y/WINDOW_HEIGHT-0.5;
+    while(temp != NULL) {
+        if(X>temp->x-1 && X<temp->x+1) {
+            printf("ouii\n");
+            if(Y>temp->y-1 && Y<temp->y+1) {
+                printf("ouiii\n");
+                return 1;
+            }
+            Node* linked = temp->linkedNodes;
+            while(linked != NULL) {
+                printf("ouiiii\n");
+                if((Y>linked->y && Y<temp->y) || (Y>temp->y && Y<linked->y)) {
+                    return 1;
+                }
+                linked = linked->nextNode;
+            }
+        }
+        else if(Y>temp->y-1 && Y<temp->y+1) {
+            printf("noon\n");
+            if(X>temp->x-1 && X<temp->x+1) {
+                return 1;
+            }
+            Node* linked = temp->linkedNodes;
+            while(linked != NULL) {
+                if((X>linked->x && X<temp->x) || (X>temp->x && X<linked->x)) {
+                    return 1;
+                }
+                linked = linked->nextNode;
+            }
+        }
+        temp = temp->nextNode;
+    }
+    return 0;
+}

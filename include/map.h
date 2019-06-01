@@ -60,4 +60,7 @@ void createLinkedNodeList(Node* nodes, Link* links);
 
 void testlinks(Node* nodes);
 
+int doesCircleIntersectsPath(float x, float y, int size, Node* nodes, unsigned int WINDOW_WIDTH, unsigned int WINDOW_HEIGHT);
+
+
 #endif
