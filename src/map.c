@@ -456,7 +456,7 @@ void testlinks(Node* nodes) {
 	Node* temp = nodes;
 	while(temp != NULL) {
 		printf("node : %d\n", temp->id);
-		Node* link = nodes->linkedNodes;
+		Node* link = temp->linkedNodes;
 		while(link != NULL) {
 			printf("%d\n", link->id);
 			link = link->nextNode;

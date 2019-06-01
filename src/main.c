@@ -98,8 +98,8 @@ int main(int argc, char** argv){
     
     createLinkedNodeList(nodes, links);
 
-    //printf("test liens\n");
-    //testlinks(nodes);
+    printf("test liens\n");
+    testlinks(nodes);
 
     // Vérification du ppm
     mapCheck(&imageMap, infos, nodes);
@@ -202,7 +202,8 @@ int main(int argc, char** argv){
                             if(towerToBuild != -1){
                                 tempT = allocTower(towerToBuild, x, y);
                                 if(!(constructionIntersection(buildings, towers, tempT->x, tempT->y, tempT->size, tempT->shape)) 
-                                   && (tempT->cost <= game->money)){
+                                   && (tempT->cost <= game->money)
+                                   && (doesCircleIntersectsPath(e.button.x, e.button.y, tempT->size, nodes, WINDOW_WIDTH, WINDOW_HEIGHT) == 0)){
                                     addTower(tempT, &towers);
                                     game->money -= tempT->cost;
                                 }else{
