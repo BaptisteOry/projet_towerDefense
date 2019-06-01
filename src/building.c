@@ -85,17 +85,19 @@ void freeBuilding(Building* b){
 }
 
 void freeBuildings(BuildingList* list){
-    Building *temp = *list;
-    Building *next;
-    while(temp != NULL){
-        next = temp->next;
-        if(temp->sprite){
-      		glDeleteTextures(1, &(temp->sprite));
-    	}
-        free(temp);
-        temp = next;
-    }
-    *list = NULL;
+	if(*list != NULL){
+	    Building *temp = *list;
+	    Building *next;
+	    while(temp != NULL){
+	        next = temp->next;
+	        if(temp->sprite){
+	      		glDeleteTextures(1, &(temp->sprite));
+	    	}
+	        free(temp);
+	        temp = next;
+	    }
+	    *list = NULL;
+	}
 }
 
 void deleteBuilding(Building* b, BuildingList* list){

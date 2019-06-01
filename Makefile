@@ -26,13 +26,13 @@ $(OBJDIR)main.o : $(SRCDIR)main.c $(SRCDIR)display.c $(INCLUDEDIR)display.h $(SR
 	$(CC) -o $@ -c $< $(CFLAGS)
 	@echo "done..."
 
-$(OBJDIR)game.o : $(SRCDIR)game.c $(INCLUDEDIR)game.h $(SRCDIR)display.c $(INCLUDEDIR)display.h $(SRCDIR)operations.c $(INCLUDEDIR)operations.h $(SRCDIR)monster.c $(INCLUDEDIR)monster.h
+$(OBJDIR)game.o : $(SRCDIR)game.c $(INCLUDEDIR)game.h $(SRCDIR)display.c $(INCLUDEDIR)display.h $(SRCDIR)operations.c $(INCLUDEDIR)operations.h $(SRCDIR)monster.c $(INCLUDEDIR)monster.h $(SRCDIR)tower.c $(INCLUDEDIR)tower.h
 	@echo "compile building"
 	mkdir -p `dirname $@`
 	$(CC) -o $@ -c $< $(CFLAGS)
 	@echo "done..."
 
-$(OBJDIR)interface.o : $(SRCDIR)interface.c $(INCLUDEDIR)interface.h $(SRCDIR)display.c $(INCLUDEDIR)display.h $(SRCDIR)operations.c $(INCLUDEDIR)operations.h $(SRCDIR)monster.c $(INCLUDEDIR)monster.h $(SRCDIR)game.c $(INCLUDEDIR)game.h
+$(OBJDIR)interface.o : $(SRCDIR)interface.c $(INCLUDEDIR)interface.h $(SRCDIR)display.c $(INCLUDEDIR)display.h $(SRCDIR)operations.c $(INCLUDEDIR)operations.h $(SRCDIR)monster.c $(INCLUDEDIR)monster.h $(SRCDIR)tower.c $(INCLUDEDIR)tower.h $(SRCDIR)game.c $(INCLUDEDIR)game.h
 	@echo "compile interface"
 	mkdir -p `dirname $@`
 	$(CC) -o $@ -c $< $(CFLAGS)

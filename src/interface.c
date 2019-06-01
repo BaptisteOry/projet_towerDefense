@@ -11,6 +11,7 @@
 #include "../include/display.h"
 #include "../include/operations.h"
 #include "../include/monster.h"
+#include "../include/tower.h"
 #include "../include/game.h"
 #include "../include/interface.h"
 

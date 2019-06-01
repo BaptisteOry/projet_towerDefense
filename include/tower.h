@@ -11,11 +11,11 @@ typedef struct Tower {
 	float x, y; // Positions
 
 	int power; // Puissance
-	float powerMultiplier;
+	float powerBonus;
 	int range; // Portée
-	float rangeMultiplier;
+	float rangeBonus;
 	int rate; // Cadence
-	float rateMultiplier;
+	float rateBonus;
 	int cost; // Coût
 
 	GLuint sprite; // Sprite

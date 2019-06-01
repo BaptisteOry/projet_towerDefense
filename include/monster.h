@@ -12,9 +12,7 @@ typedef struct Monster {
 	float x, y; // Positions
 
 	int loot;
-	float lootMultiplier;
 	int healthPoints;
-	float healthPointsMultiplier;
 	int speed;
 
 	GLuint sprite; // Sprite
