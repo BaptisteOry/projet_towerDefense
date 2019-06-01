@@ -80,7 +80,7 @@ $(OBJDIR)display.o : $(SRCDIR)display.c $(INCLUDEDIR)display.h
 	$(CC) -o $@ -c $< $(CFLAGS)
 	@echo "done..."	
 
-$(OBJDIR)operations.o : $(SRCDIR)operations.c $(INCLUDEDIR)operations.h
+$(OBJDIR)operations.o : $(SRCDIR)operations.c $(INCLUDEDIR)operations.h $(SRCDIR)map.c $(INCLUDEDIR)map.h
 	@echo "compile operations"
 	mkdir -p `dirname $@`
 	$(CC) -o $@ -c $< $(CFLAGS)

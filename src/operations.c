@@ -9,6 +9,7 @@
 #include <stdlib.h>
 
 #include "../include/operations.h"
+#include "../include/map.h"
 
 void slice_str(const char * str, char * buffer, int start, int end) {
     int j = 0;
