@@ -2,11 +2,14 @@
 #include <SDL/SDL_image.h>
 #include <GL/gl.h>
 #include <GL/glu.h>
+#include <GL/glut.h> 
+#include <math.h>
 
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "../include/controller.h"
+#include "../include/display.h"
+#include "../include/operations.h"
 #include "../include/monster.h"
 
 Monster* allocMonster(monsterType type, float x, float y){
@@ -27,13 +30,13 @@ Monster* allocMonster(monsterType type, float x, float y){
 			m->healthPoints = 10;
 			m->speed = 10;
 			m->r = 255; m->g = 0; m->b = 0;
-			m->sprite = loadTexture("images/monster_1.png");
+			m->sprite = loadTexture("images/monster_sad.png");
 			break;
 		case MANGRY:
 			m->healthPoints = 15;
 			m->speed = 20;
 			m->r = 0; m->g = 255; m->b = 0;
-			m->sprite = loadTexture("images/monster_2.png");
+			m->sprite = loadTexture("images/monster_angry.png");
 			break;
 		default:
 			break;

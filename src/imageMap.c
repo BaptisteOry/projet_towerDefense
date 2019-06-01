@@ -6,7 +6,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "../include/controller.h"
+#include "../include/display.h"
 #include "../include/imageMap.h"
 
 void newImageMap(ImageMap *imageMap, unsigned int width, unsigned int height, char *fileName){
@@ -23,7 +23,7 @@ void newImageMap(ImageMap *imageMap, unsigned int width, unsigned int height, ch
 
   // Sprite de la carte
   char fileNameJpg[255]= "";
-  strcat(strcpy(fileNameJpg, fileName), ".jpg");
+  strcat(strcpy(fileNameJpg, fileName), ".png");
   imageMap->sprite = loadTexture(fileNameJpg);
 }
 
@@ -50,7 +50,7 @@ void loadImageMapPPM(ImageMap* imageMap, char *fileName){
   char fileNamePpm[255]= "";
   strcat(strcpy(fileNamePpm, fileName), ".ppm");
   if (!(myFile = fopen(fileNamePpm, "rt"))){ 
-    printf("loadImageMapPPM: erreur pour ouvrir le fichier %s.\n", fileName);
+    printf("loadImageMapPPM: erreur pour ouvrir le fichier %s\n", fileName);
     exit(EXIT_FAILURE);
   }
 
@@ -81,6 +81,10 @@ void loadImageMapPPM(ImageMap* imageMap, char *fileName){
     if (fscanf(myFile, "%hhu", (imageMap->data)+i) != 1) {
       printf("newImageMap : ne peut pas lire le fichier ppm %s, composantes RGB invalides\n", fileName);
     }
+  }
+
+  for (int i=0; i<width*height*3; i++){
+    printf("%hhu\n", imageMap->data[i]);
   }
 
   // Fermer fichier

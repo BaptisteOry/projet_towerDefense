@@ -22,6 +22,7 @@ typedef struct Building {
 	struct Building *next; // Bâtiment suivant
 } Building, *BuildingList;
 
+const char* getBuildingTypeName(buildingType bt);
 Building* allocBuilding(buildingType type, float x, float y);
 void addBuilding(Building* b, BuildingList* list);
 void freeBuilding(Building* b);

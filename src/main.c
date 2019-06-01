@@ -3,25 +3,27 @@
 #include <GL/gl.h>
 #include <GL/glu.h>
 #include <GL/glut.h> 
-
-#include <stdlib.h>
-#include <stdio.h>
 #include <math.h>
 #include <time.h>
 
-#include "../include/controller.h"
+#include <stdio.h>
+#include <stdlib.h>
+
+#include "../include/display.h"
+#include "../include/operations.h"
 #include "../include/monster.h"
 #include "../include/building.h"
 #include "../include/tower.h"
 #include "../include/construction.h"
 #include "../include/game.h"
+#include "../include/interface.h"
 #include "../include/imageMap.h"
 #include "../include/map.h"
 
 // Dimensions initiales et titre de la fenetre
 static unsigned int WINDOW_WIDTH = 1000;
 static unsigned int WINDOW_HEIGHT = 600;
-static const char WINDOW_TITLE[] = "Tower Power";
+static const char WINDOW_TITLE[] = "Flower Tower";
 // Espace fenetre virtuelle
 static const float GL_VIEW_WIDTH = 250.;
 static const float GL_VIEW_HEIGHT = 150.;
@@ -73,20 +75,18 @@ int main(int argc, char** argv){
     static ImageMap imageMap;
     static char imageMap01[255]="images/map01";
     static Game* game;
+    static Interface* interface;
     static MonsterList monsters;
     static TowerList towers;
     static BuildingList buildings;
     towerType towerToBuild = -1;
     buildingType buildingToBuild = -1;
-    int help = 0;
-    char bufferText[510] = "";
-    char infosConstructions[510] = "";
-    int counter = FRAMERATE_MILLISECONDS;
+    int help = -1;
+    int counter = 0;
     srand(time(NULL));
 
     // Charger image ppm (placer dans l'image carte)
     loadImageMapPPM(&imageMap, imageMap01);
-
     // Vérification carte et itd
     char* itdFile = "data/map01.itd";
     ItdEltsInfos* infos = NULL;
@@ -109,6 +109,8 @@ int main(int argc, char** argv){
     //testLectureItd(infos, nodes, links);
 
     // Créer un nouveau jeu
+    // Créer un nouveau jeu et l'interface
+    interface = allocInterface(GL_VIEW_WIDTH, GL_VIEW_HEIGHT);
     game = allocGame();
 
     /* Boucle principale */
@@ -132,29 +134,13 @@ int main(int argc, char** argv){
         drawRangeBuildings(buildings);
         drawTowers(towers);
         drawBuildings(buildings);
-        drawInfosConstructions(infosConstructions);
-        // Textes
-        sprintf(bufferText, "Argent : %d\nVague : %d/10", game->money, game->nbWave);
-        displayText(GLUT_BITMAP_HELVETICA_18, (unsigned char*)bufferText, convertWindowGLViewWidth(10, WINDOW_WIDTH, GL_VIEW_WIDTH), convertWindowGLViewHeight(25, WINDOW_HEIGHT, GL_VIEW_HEIGHT), 255, 255, 255);
+        drawInfosConstructions(interface);
+        drawGameElements(interface, game);
         if(help == 1){
-            glPushMatrix();
-                glPushMatrix();
-                    glScalef(GL_VIEW_WIDTH, GL_VIEW_HEIGHT, 0);
-                    drawSquare(0, 0, 0, 200);
-                glPopMatrix();
-                sprintf(bufferText, "Aide Tower Power :\n\nA / Z / E / R + clic gauche : construire une tour\n> A : tour rouge\n> Z : tour verte\n> E : tour jaune\n> R : tour bleue\n\nQ / S / D + clic gauche : construire un batiment\n> Q : radar\n> S : usine\n> D : stock\n\nClic droit : detruire une construction");
-                displayText(GLUT_BITMAP_HELVETICA_18, (unsigned char*)bufferText, convertWindowGLViewWidth(10, WINDOW_WIDTH, GL_VIEW_WIDTH), convertWindowGLViewHeight(25, WINDOW_HEIGHT, GL_VIEW_HEIGHT), 255, 255, 255);
-            glPopMatrix();
+            drawHelp(interface);
         }
         if((game->end) == 1){
-            glPushMatrix();
-                glPushMatrix();
-                    glScalef(GL_VIEW_WIDTH, GL_VIEW_HEIGHT, 0);
-                    drawSquare(0, 0, 0, 200);
-                glPopMatrix();
-                sprintf(bufferText, "C'est la fin !");
-                displayText(GLUT_BITMAP_HELVETICA_18, (unsigned char*)bufferText, convertWindowGLViewWidth(10, WINDOW_WIDTH, GL_VIEW_WIDTH), convertWindowGLViewHeight(25, WINDOW_HEIGHT, GL_VIEW_HEIGHT), 255, 255, 255);
-            glPopMatrix();
+            drawEnd(interface);
         }
 
         // Échange du front et du back buffer : mise à jour de la fenêtre
@@ -162,11 +148,8 @@ int main(int argc, char** argv){
 
         /* Évènements jeu */
         // Création de vagues de monstres
-        //printf("%d\n", counter);
-        if(counter%10000 == 0){ // Évènement toutes les 5 secondes
-            addWave(game, &monsters);
-        }
-        counter += 100;
+        addWave(game, &monsters, counter);
+
         // Destruction monstres
         
         /* Évènements joueur */
@@ -174,13 +157,19 @@ int main(int argc, char** argv){
         Tower* tempT; Building* tempB;
         SDL_Event e;
         while(SDL_PollEvent(&e)){
+            x = -GL_VIEW_WIDTH + GL_VIEW_WIDTH*2 * (e.button.x) / WINDOW_WIDTH;
+            y = -(-GL_VIEW_HEIGHT + GL_VIEW_HEIGHT*2 * (e.button.y) / WINDOW_HEIGHT);
+
             // L'utilisateur ferme la fenêtre
             if(e.type == SDL_QUIT){
                 loop = 0;
                 break;
-            }
-            if(e.type == SDL_KEYDOWN 
+            }else if(e.type == SDL_KEYDOWN 
                 && (e.key.keysym.sym == SDLK_ESCAPE)){
+                loop = 0; 
+                break;
+            }else if(e.type == SDL_MOUSEBUTTONUP 
+                &&  quitSelected(interface, x, y) && help == -1 && towerToBuild == -1 && buildingToBuild == -1){
                 loop = 0; 
                 break;
             }
@@ -191,12 +180,21 @@ int main(int argc, char** argv){
                     reshape(&surface, e.resize.w, e.resize.h);
                     break;
 
+                // Bouge souris
+                case SDL_MOUSEMOTION:
+                    if(towerToBuild != -1){
+                        tempT = allocTower(towerToBuild, x, y);
+                        drawTower(tempT);
+                    }else if(buildingToBuild != -1){
+                        
+                    }
+                    break;
+
                 // Clic souris
                 case SDL_MOUSEBUTTONUP:
                     printf("clic en (%d, %d)\n", e.button.x, e.button.y);
-                    x = -GL_VIEW_WIDTH + GL_VIEW_WIDTH*2 * (e.button.x) / WINDOW_WIDTH;
-                    y = -(-GL_VIEW_HEIGHT + GL_VIEW_HEIGHT*2 * (e.button.y) / WINDOW_HEIGHT);
                     printf("coord (%f, %f)\n", x, y);
+                    strcpy(interface->infosConstructions, "");
                     switch(e.button.button){
                         case SDL_BUTTON_LEFT:
                             if(towerToBuild != -1){
@@ -205,6 +203,7 @@ int main(int argc, char** argv){
                                    && (tempT->cost <= game->money)
                                    && (doesCircleIntersectsPath(e.button.x, e.button.y, tempT->size, nodes, WINDOW_WIDTH, WINDOW_HEIGHT) == 0)){
                                     addTower(tempT, &towers);
+                                    giveBonusTower(tempT, &buildings);
                                     game->money -= tempT->cost;
                                 }else{
                                     free(tempT);
@@ -223,11 +222,9 @@ int main(int argc, char** argv){
                                 tempT = towerSelected(towers, x, y);
                                 tempB = buildingSelected(buildings, x, y);
                                 if(tempT != NULL){
-                                    drawInfosTower(tempT, infosConstructions);
+                                    drawInfosTower(tempT, interface->infosConstructions);
                                 }else if(tempB != NULL){
-                                    drawInfosBuilding(tempB, infosConstructions);
-                                }else{
-                                    strcpy(infosConstructions, "");
+                                    drawInfosBuilding(tempB, interface->infosConstructions);
                                 }
                             }
                             break;
@@ -236,6 +233,7 @@ int main(int argc, char** argv){
                             tempT = towerSelected(towers, x, y);
                             tempB = buildingSelected(buildings, x, y);
                             if(tempT != NULL){
+                                removeBonusTower(tempT, &buildings);
                                 deleteTower(tempT, &towers);
                                 game->money += tempT->cost;
                             }else if(tempB != NULL){
@@ -258,7 +256,7 @@ int main(int argc, char** argv){
                         towerToBuild = TRED;
                     }
                     if(e.key.keysym.sym == SDLK_z){
-                        towerToBuild = TGREEN;
+                        towerToBuild = TPURPLE;
                     }
                     if(e.key.keysym.sym == SDLK_e){
                         towerToBuild = TYELLOW;
@@ -294,7 +292,7 @@ int main(int argc, char** argv){
                     }
                     // Quitter aide
                     if(e.key.keysym.sym == SDLK_h){
-                        help = 0;
+                        help = -1;
                     }
                     break;
                     
@@ -304,6 +302,7 @@ int main(int argc, char** argv){
         }
 
         /* Temps écoulé */
+        counter += 100;
         // Calcul du temps écoulé
         Uint32 elapsedTime = SDL_GetTicks() - startTime;
         // Si trop peu de temps s'est écoulé, on met en pause le programme
@@ -317,6 +316,7 @@ int main(int argc, char** argv){
     SDL_Quit();
     // Libération allocations et mémoire texture 
     freeGame(game);
+    freeInterface(interface);
     freeImageMap(&imageMap);
     freeTowers(&towers);
     freeBuildings(&buildings);

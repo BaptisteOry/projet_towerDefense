@@ -2,7 +2,7 @@
 #define TOWER_H_
 /// \enumeration types de tours
 typedef enum{
-	TRED, TGREEN, TYELLOW, TBLUE
+	TRED, TPURPLE, TYELLOW, TBLUE
 }towerType;
 
 /// \structure tour
@@ -26,11 +26,13 @@ typedef struct Tower {
 	struct Tower *next; // Tour suivante
 } Tower, *TowerList;
 
+const char* getTowerTypeName(towerType tt);
 Tower* allocTower(towerType type, float x, float y);
 void addTower(Tower* t, TowerList* list);
 void freeTower(Tower* t);
 void freeTowers(TowerList* list);
 void deleteTower(Tower* t, TowerList* list);
+void drawTower(Tower* t);
 void drawTowers(TowerList list);
 void drawRangeTowers(TowerList list);
 void drawInfosTower(Tower* t, char* infosConstructions);
