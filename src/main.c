@@ -149,8 +149,8 @@ int main(int argc, char** argv){
         /* Évènements jeu */
         // Création de vagues de monstres
         addWave(game, &monsters, counter);
-
         // Destruction monstres
+        killMonsters(&monsters, &towers, counter);
         
         /* Évènements joueur */
         float x,y;

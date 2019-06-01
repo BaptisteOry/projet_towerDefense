@@ -20,13 +20,13 @@ void giveBonusTowers(Building* b, TowerList* listTowers){
         if(isSquareIntersectsCircle(tempT->x, tempT->y, b->x, b->y, tempT->size, b->range)){
             switch(b->type){
                 case RADAR :
-                    tempT->rangeMultiplier += 0.25;
+                    tempT->rangeBonus += 0.25;
                     break;
                 case FACTORY:
-                    tempT->powerMultiplier += 0.25;
+                    tempT->powerBonus += 0.25;
                     break;
                 case STOCK:
-                    tempT->rateMultiplier += 0.25;
+                    tempT->rateBonus += 0.25;
                     break;
                 default:
                     break;
@@ -42,13 +42,13 @@ void giveBonusTower(Tower* t, BuildingList* listBuildings){
         if(isSquareIntersectsCircle(t->x, t->y, tempB->x, tempB->y, t->size, tempB->range)){
             switch(tempB->type){
                 case RADAR :
-                    t->rangeMultiplier += 0.25;
+                    t->rangeBonus += 0.25;
                     break;
                 case FACTORY:
-                    t->powerMultiplier += 0.25;
+                    t->powerBonus += 0.25;
                     break;
                 case STOCK:
-                    t->rateMultiplier += 0.25;
+                    t->rateBonus += 0.25;
                     break;
                 default:
                     break;
@@ -64,13 +64,13 @@ void removeBonusTowers(Building* b, TowerList* listTowers){
         if(isSquareIntersectsCircle(tempT->x, tempT->y, b->x, b->y, tempT->size, b->range)){
             switch(b->type){
                 case RADAR :
-                    tempT->rangeMultiplier -= 0.25;
+                    tempT->rangeBonus -= 0.25;
                     break;
                 case FACTORY:
-                    tempT->powerMultiplier -= 0.25;
+                    tempT->powerBonus -= 0.25;
                     break;
                 case STOCK:
-                    tempT->rateMultiplier -= 0.25;
+                    tempT->rateBonus -= 0.25;
                     break;
                 default:
                     break;
@@ -86,13 +86,13 @@ void removeBonusTower(Tower* t, BuildingList* listBuildings){
         if(isSquareIntersectsCircle(t->x, t->y, tempB->x, tempB->y, t->size, tempB->range)){
             switch(tempB->type){
                 case RADAR :
-                    t->rangeMultiplier -= 0.25;
+                    t->rangeBonus -= 0.25;
                     break;
                 case FACTORY:
-                    t->powerMultiplier -= 0.25;
+                    t->powerBonus -= 0.25;
                     break;
                 case STOCK:
-                    t->rateMultiplier -= 0.25;
+                    t->rateBonus -= 0.25;
                     break;
                 default:
                     break;

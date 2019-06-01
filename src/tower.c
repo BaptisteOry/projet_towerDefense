@@ -38,38 +38,38 @@ Tower* allocTower(towerType type, float x, float y){
     t->type = type; // Type
 	t->x = x; // Position x
 	t->y = y; // Position y
-	t->powerMultiplier = 1;
-	t->rangeMultiplier = 1;
-	t->rateMultiplier = 1;
+	t->powerBonus = 1;
+	t->rangeBonus = 1;
+	t->rateBonus = 1;
 	switch(type){
 		case TRED :
 			t->power = 100;
-			t->range= 135;
-			t->rate = 10; //every second
+			t->range = 135;
+			t->rate = 1000; // Toutes les secondes
 			t->cost = 50;
 			t->r = 217; t->g = 55; t->b = 30;
 			t->sprite = loadTexture("images/tower_red.png");
 			break;
 		case TPURPLE:
 			t->power = 50;
-			t->range= 110;
-			t->rate = 85; //every 200ms
+			t->range = 110;
+			t->rate = 200; // Toutes les 200ms
 			t->cost = 40;
 			t->r = 130; t->g = 78; t->b = 139;
 			t->sprite = loadTexture("images/tower_purple.png");
 			break;
 		case TYELLOW:
 			t->power = 30;
-			t->range= 95;
-			t->rate = 30; //every 600ms
+			t->range = 95;
+			t->rate = 600; // Toutes les 600ms
 			t->cost = 30;
 			t->r = 249; t->g = 171; t->b = 60;
 			t->sprite = loadTexture("images/tower_yellow.png");
 			break;
 		case TBLUE:
 			t->power = 30;
-			t->range= 80;
-			t->rate = 30; //every 400ms
+			t->range = 80;
+			t->rate = 400; // Toutes les 400ms
 			t->cost = 20;
 			t->r = 43; t->g = 117; t->b = 140;
 			t->sprite = loadTexture("images/tower_blue.png");
@@ -106,7 +106,7 @@ void freeTower(Tower* t){
 }
 
 void freeTowers(TowerList* list){
-	if(list != NULL){
+	if(*list != NULL){
 		Tower *temp = *list;
     	Tower *next;
     	while(temp != NULL){
@@ -164,7 +164,7 @@ void drawRangeTowers(TowerList list){
     while(list != NULL){
 		glPushMatrix();
 			glTranslatef(list->x, list->y, 0);
-			glScalef((list->range)*(list->rangeMultiplier), (list->range)*(list->rangeMultiplier), 0);
+			glScalef((list->range)*(list->rangeBonus), (list->range)*(list->rangeBonus), 0);
 			drawCircle(list->r, list->g, list->b, 75);
 		glPopMatrix();
 
@@ -174,7 +174,7 @@ void drawRangeTowers(TowerList list){
 
 void drawInfosTower(Tower* t, char* infosConstructions){
 	if(t != NULL){
-		sprintf(infosConstructions, "Type : %s\nCout : %d\nPuissance : %d\nPortee : %d\nCadence : %d\n", getTowerTypeName(t->type), t->cost, (int)(t->power*t->powerMultiplier), (int)(t->range*t->rangeMultiplier), (int)(t->rate*t->rateMultiplier));
+		sprintf(infosConstructions, "Type : %s\nCout : %d\nPuissance : %d\nPortee : %d\nCadence : %d\n", getTowerTypeName(t->type), t->cost, (int)(t->power*t->powerBonus), (int)(t->range*t->rangeBonus), (int)(t->rate*t->rateBonus));
 	}
 }
 

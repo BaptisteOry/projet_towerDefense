@@ -23,8 +23,6 @@ Monster* allocMonster(monsterType type, float x, float y){
 	m->x = x; // Position x
 	m->y = y; // Position y
 	m->loot = 5; // Butin
-	m->lootMultiplier = 1;
-	m->healthPointsMultiplier = 1;
 	switch(type){
 		case MSAD :
 			m->healthPoints = 10;
