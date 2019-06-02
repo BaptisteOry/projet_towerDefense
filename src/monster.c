@@ -113,3 +113,82 @@ void drawMonsters(MonsterList list){
         list = list->next;
     }
 }
+
+void moveMonster(Monster* m, Node* nodes, unsigned int WINDOW_WIDTH, unsigned int WINDOW_HEIGHT) {
+	int nodeId = testOnNode(m, nodes, WINDOW_WIDTH, WINDOW_HEIGHT);
+	switch(m->direction) {
+		case UP : goUp(m);
+			break;
+		case DOWN : goDown(m);
+			break;
+		case LEFT : goLeft(m);
+			break;
+		case RIGHT : goRight(m);
+			break;
+		case NONE : chooseDirection(m, nodes, nodeId);
+	}
+}
+
+void goUp(Monster* m) {
+	m->y += 1;
+}
+
+void goDown(Monster* m) {
+	m->y += -1;
+}
+
+void goLeft(Monster* m) {
+	m->x += -1;
+}
+
+void goRight(Monster* m) {
+	m->x += 1;
+}
+
+direction chooseDirection(Monster* m, Node* nodes, int nodeId) {
+	Node* temp = nodes;
+	while(temp != NULL && temp->id != nodeId) {
+		temp = temp->nextNode;
+	}
+	Node* links = temp->linkedNodes;
+	int nbLinks = 0;
+	while(links != NULL) {
+		nbLinks++;
+		links = links->nextNode;
+	}
+	links = temp->linkedNodes;
+	for(int i=0; i<rand()%nbLinks; i++) {
+		links = links->nextNode;
+	}
+	if(temp->x = links->x) {
+		if(temp->y > links->y) {
+			return UP;
+		}
+		else if(temp->y < links->y) {
+			return DOWN;
+		}
+	}
+	else if(temp->y = links->y) {
+		if(temp->x > links->x) {
+			return LEFT;
+		}
+		else if(temp->x < links->x) {
+			return RIGHT;
+		}
+	}
+	return NONE;
+}
+
+int testOnNode(Monster* m, Node* nodes, unsigned int WINDOW_WIDTH, unsigned int WINDOW_HEIGHT) {
+	Node* temp = nodes;
+	float x = 10*m->x/WINDOW_WIDTH-0.5;
+	float y = 10*m->x/WINDOW_HEIGHT-0.5;
+	while(temp != NULL) {
+		if(x<temp->x+1 && x>temp->x-1 && y<temp->y+1 && y>temp->y-1) {
+			m->direction = NONE;
+			return temp->id;
+		}
+		temp = temp->nextNode;
+	}
+	return -1;
+}
