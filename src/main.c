@@ -14,8 +14,8 @@
 #include "../include/monster.h"
 #include "../include/building.h"
 #include "../include/tower.h"
-#include "../include/construction.h"
 #include "../include/game.h"
+#include "../include/construction.h"
 #include "../include/interface.h"
 #include "../include/imageMap.h"
 #include "../include/map.h"
@@ -79,8 +79,14 @@ int main(int argc, char** argv){
     static MonsterList monsters;
     static TowerList towers;
     static BuildingList buildings;
-    towerType towerToBuild = -1;
-    buildingType buildingToBuild = -1;
+    float x = 0;
+    float y = 0;
+    float x2 = 0;
+    float y2 = 0;
+    Tower* towerToBuild = NULL;
+    Tower* towerSelect = NULL; 
+    Building* buildingToBuild = NULL;
+    Building* buildingSelect = NULL;
     int help = -1;
     int counter = 0;
     srand(time(NULL));
@@ -108,7 +114,6 @@ int main(int argc, char** argv){
     printf("Test test\n");
     //testLectureItd(infos, nodes, links);
 
-    // Créer un nouveau jeu
     // Créer un nouveau jeu et l'interface
     interface = allocInterface(GL_VIEW_WIDTH, GL_VIEW_HEIGHT);
     game = allocGame();
@@ -125,6 +130,12 @@ int main(int argc, char** argv){
         glClearColor(0.1, 0.1, 0.1, 1);
         // Désactivage du double buffering
         SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 0);
+
+        /* Évènements jeu */
+        // Création de vagues de monstres
+        addWave(game, &monsters, counter);
+        // Destruction monstres
+        killMonsters(&monsters, &towers, counter);
         
         /* Code de dessin */
         // Objets (constructions et monstres)
@@ -136,6 +147,11 @@ int main(int argc, char** argv){
         drawBuildings(buildings);
         drawInfosConstructions(interface);
         drawGameElements(interface, game);
+        if(towerToBuild != NULL){
+            drawTower(towerToBuild);
+        }else if (buildingToBuild != NULL){
+            drawBuilding(buildingToBuild);
+        }
         if(help == 1){
             drawHelp(interface);
         }
@@ -145,20 +161,10 @@ int main(int argc, char** argv){
 
         // Échange du front et du back buffer : mise à jour de la fenêtre
         SDL_GL_SwapBuffers();
-
-        /* Évènements jeu */
-        // Création de vagues de monstres
-        addWave(game, &monsters, counter);
-        // Destruction monstres
-        killMonsters(&monsters, &towers, counter);
         
         /* Évènements joueur */
-        float x,y;
-        Tower* tempT; Building* tempB;
         SDL_Event e;
         while(SDL_PollEvent(&e)){
-            x = -GL_VIEW_WIDTH + GL_VIEW_WIDTH*2 * (e.button.x) / WINDOW_WIDTH;
-            y = -(-GL_VIEW_HEIGHT + GL_VIEW_HEIGHT*2 * (e.button.y) / WINDOW_HEIGHT);
 
             // L'utilisateur ferme la fenêtre
             if(e.type == SDL_QUIT){
@@ -169,7 +175,7 @@ int main(int argc, char** argv){
                 loop = 0; 
                 break;
             }else if(e.type == SDL_MOUSEBUTTONUP 
-                &&  quitSelected(interface, x, y) && help == -1 && towerToBuild == -1 && buildingToBuild == -1){
+                && quitSelected(interface, x, y) && help == -1 && towerToBuild == NULL && buildingToBuild == NULL){
                 loop = 0; 
                 break;
             }
@@ -182,11 +188,18 @@ int main(int argc, char** argv){
 
                 // Bouge souris
                 case SDL_MOUSEMOTION:
-                    if(towerToBuild != -1){
-                        tempT = allocTower(towerToBuild, x, y);
-                        drawTower(tempT);
-                    }else if(buildingToBuild != -1){
-                        
+                    x = -GL_VIEW_WIDTH + GL_VIEW_WIDTH*2 * (e.button.x) / WINDOW_WIDTH;
+                    y = -(-GL_VIEW_HEIGHT + GL_VIEW_HEIGHT*2 * (e.button.y) / WINDOW_HEIGHT);
+
+                    x2 = e.button.x;
+                    y2 = e.button.y;
+
+                    if(towerToBuild != NULL){
+                        towerToBuild->x = x; towerToBuild->y = y;
+                        towerConstructible(towerToBuild, buildings, towers, nodes, game, e.button.x, e.button.y, WINDOW_WIDTH, WINDOW_HEIGHT);
+                    }else if(buildingToBuild != NULL){
+                        buildingToBuild->x = x; buildingToBuild->y = y;
+                        buildingConstructible(buildingToBuild, buildings, towers, nodes, game, e.button.x, e.button.y, WINDOW_WIDTH, WINDOW_HEIGHT);
                     }
                     break;
 
@@ -195,52 +208,43 @@ int main(int argc, char** argv){
                     printf("clic en (%d, %d)\n", e.button.x, e.button.y);
                     printf("coord (%f, %f)\n", x, y);
                     strcpy(interface->infosConstructions, "");
+
                     switch(e.button.button){
                         case SDL_BUTTON_LEFT:
-                            if(towerToBuild != -1){
-                                tempT = allocTower(towerToBuild, x, y);
-                                if(!(constructionIntersection(buildings, towers, tempT->x, tempT->y, tempT->size, tempT->shape)) 
-                                   && (tempT->cost <= game->money)
-                                   && (doesCircleIntersectsPath(e.button.x, e.button.y, tempT->size, nodes, WINDOW_WIDTH, WINDOW_HEIGHT) == 0)){
-                                    addTower(tempT, &towers);
-                                    giveBonusTower(tempT, &buildings);
-                                    game->money -= tempT->cost;
-                                }else{
-                                    free(tempT);
-                                }
-                            }else if(buildingToBuild != -1){
-                                tempB = allocBuilding(buildingToBuild, x, y);
-                                if(!(constructionIntersection(buildings, towers, tempB->x, tempB->y, tempB->size, tempB->shape)) 
-                                   && (tempB->cost <= game->money)
-                                   && (doesCircleIntersectsPath(e.button.x, e.button.y, tempB->size, nodes, WINDOW_WIDTH, WINDOW_HEIGHT) == 0)){
-                                    addBuilding(tempB, &buildings);
-                                    giveBonusTowers(tempB, &towers);
-                                    game->money -= tempB->cost;
-                                }else{
-                                    free(tempB);
-                                }
+                            if(towerToBuild != NULL && towerToBuild->constructible != 0){
+                                addTower(towerToBuild, &towers);
+                                giveBonusTower(towerToBuild, &buildings);
+                                game->money -= towerToBuild->cost;
+                                towerToBuild = allocTower(towerToBuild->type, x, y);
+                            }else if(buildingToBuild != NULL && buildingToBuild->constructible != 0){
+                                addBuilding(buildingToBuild, &buildings);
+                                giveBonusTowers(buildingToBuild, &towers);
+                                game->money -= buildingToBuild->cost;
+                                buildingToBuild = allocBuilding(buildingToBuild->type, x, y);
                             }else{
-                                tempT = towerSelected(towers, x, y);
-                                tempB = buildingSelected(buildings, x, y);
-                                if(tempT != NULL){
-                                    drawInfosTower(tempT, interface->infosConstructions);
-                                }else if(tempB != NULL){
-                                    drawInfosBuilding(tempB, interface->infosConstructions);
+                                towerSelect = towerSelected(towers, x, y);
+                                buildingSelect = buildingSelected(buildings, x, y);
+                                if(towerSelect != NULL){
+                                    drawInfosTower(towerSelect, interface->infosConstructions);
+                                }else if(buildingSelect != NULL){
+                                    drawInfosBuilding(buildingSelect, interface->infosConstructions);
                                 }
                             }
                             break;
 
                         case SDL_BUTTON_RIGHT:
-                            tempT = towerSelected(towers, x, y);
-                            tempB = buildingSelected(buildings, x, y);
-                            if(tempT != NULL){
-                                removeBonusTower(tempT, &buildings);
-                                deleteTower(tempT, &towers);
-                                game->money += tempT->cost;
-                            }else if(tempB != NULL){
-                                removeBonusTowers(tempB, &towers);
-                                deleteBuilding(tempB, &buildings);
-                                game->money += tempB->cost;
+                            towerSelect = towerSelected(towers, x, y);
+                            buildingSelect = buildingSelected(buildings, x, y);
+                            if(towerSelect != NULL){
+                                removeBonusTower(towerSelect, &buildings);
+                                deleteTower(towerSelect, &towers);
+                                game->money += towerSelect->cost;
+                                towerSelect = NULL;
+                            }else if(buildingSelect != NULL){
+                                removeBonusTowers(buildingSelect, &towers);
+                                deleteBuilding(buildingSelect, &buildings);
+                                game->money += buildingSelect->cost;
+                                buildingSelect = NULL;
                             }
                             break;
 
@@ -254,26 +258,32 @@ int main(int argc, char** argv){
                     printf("touche pressee (code = %d)\n", e.key.keysym.sym);
                     // Sélection des tours
                     if(e.key.keysym.sym == SDLK_a){
-                        towerToBuild = TRED;
+                        towerToBuild = allocTower(TRED, x, y);
                     }
                     if(e.key.keysym.sym == SDLK_z){
-                        towerToBuild = TPURPLE;
+                        towerToBuild = allocTower(TPURPLE, x, y);
                     }
                     if(e.key.keysym.sym == SDLK_e){
-                        towerToBuild = TYELLOW;
+                        towerToBuild = allocTower(TYELLOW, x, y);
                     }
                     if(e.key.keysym.sym == SDLK_r){
-                        towerToBuild = TBLUE;
+                        towerToBuild = allocTower(TBLUE, x, y);
+                    }
+                    if(e.key.keysym.sym == SDLK_a || e.key.keysym.sym == SDLK_z || e.key.keysym.sym == SDLK_e || e.key.keysym.sym == SDLK_r) {
+                        towerConstructible(towerToBuild, buildings, towers, nodes, game, x2, y2, WINDOW_WIDTH, WINDOW_HEIGHT);
                     }
                     // Sélection des bâtiments
                     if(e.key.keysym.sym == SDLK_q){
-                        buildingToBuild = RADAR;
+                        buildingToBuild = allocBuilding(RADAR, x, y);
                     }
                     if(e.key.keysym.sym == SDLK_s){
-                        buildingToBuild = FACTORY;
+                        buildingToBuild = allocBuilding(FACTORY, x, y);
                     }
                     if(e.key.keysym.sym == SDLK_d){
-                        buildingToBuild = STOCK;
+                        buildingToBuild = allocBuilding(STOCK, x, y);
+                    }
+                    if(e.key.keysym.sym == SDLK_q || e.key.keysym.sym == SDLK_s || e.key.keysym.sym == SDLK_d) {
+                        buildingConstructible(buildingToBuild, buildings, towers, nodes, game, x2, y2, WINDOW_WIDTH, WINDOW_HEIGHT);
                     }
                     // Aide
                     if(e.key.keysym.sym == SDLK_h){
@@ -285,11 +295,13 @@ int main(int argc, char** argv){
                 case SDL_KEYUP:
                     // Désélection des tours
                     if(e.key.keysym.sym == SDLK_a || e.key.keysym.sym == SDLK_z || e.key.keysym.sym == SDLK_e || e.key.keysym.sym == SDLK_r) {
-                        towerToBuild = -1;
+                        freeTower(towerToBuild);
+                        towerToBuild = NULL;
                     }
                     // Désélection des bâtiments
                     if(e.key.keysym.sym == SDLK_q || e.key.keysym.sym == SDLK_s || e.key.keysym.sym == SDLK_d) {
-                        buildingToBuild = -1;
+                        freeBuilding(buildingToBuild);
+                        buildingToBuild = NULL;
                     }
                     // Quitter aide
                     if(e.key.keysym.sym == SDLK_h){
@@ -301,7 +313,6 @@ int main(int argc, char** argv){
                     break;
             }
         }
-
         /* Temps écoulé */
         counter += 100;
         // Calcul du temps écoulé

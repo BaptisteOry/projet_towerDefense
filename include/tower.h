@@ -9,6 +9,7 @@ typedef enum{
 typedef struct Tower {
 	towerType type; // Type
 	float x, y; // Positions
+	int constructible; // Construisible
 
 	int power; // Puissance
 	float powerBonus;
@@ -19,7 +20,8 @@ typedef struct Tower {
 	int cost; // Coût
 
 	GLuint sprite; // Sprite
-	int r, g, b; // Couleur
+	int r, g, b, a; // Couleurs
+	int rRange, gRange, bRange, aRange; // Couleurs portée
 	int size; // Taille
 	shape shape; // Forme
 

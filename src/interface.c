@@ -42,6 +42,8 @@ Interface* allocInterface(float GL_VIEW_WIDTH, float GL_VIEW_HEIGHT){
     i->xText = 5; i->yText = -10; 
     i->font = GLUT_BITMAP_9_BY_15;
 
+    i->r = 110; i->g = 162; i->b = 66; i->a = 235;
+
     strcpy(i->infosConstructions, "");
 
     return i;
@@ -62,14 +64,14 @@ void drawGameElements(Interface* f, Game* g){
     glPushMatrix();
         glTranslatef(f->xLogo, f->yLogo, 0);
         glScalef(f->wLogo, f->hLogo, 0);
-        drawPicture(f->spriteLogo);
+        drawPicture(f->spriteLogo, 255, 255, 255, 255);
     glPopMatrix();
     // Bouton quitter
     glPushMatrix();
         glTranslatef(f->xQuit, f->yQuit, 0);
         glPushMatrix();
             glScalef(f->wQuit, f->hQuit, 0);
-            drawSquare(110, 162, 66, 250);
+            drawSquare(f->r, f->g, f->b, 255);
         glPopMatrix();
         sprintf(bufferText, "Quitter");
         displayText(f->font, (unsigned char*)bufferText, -15.5, -2, 255, 255, 255);
@@ -79,7 +81,7 @@ void drawGameElements(Interface* f, Game* g){
         glTranslatef(f->xInfosGame, f->yInfosGame, 0);
         glPushMatrix();
             glScalef(f->wInfosGame, f->hInfosGame, 0);
-            drawSquare(110, 162, 66, 250);
+            drawSquare(f->r, f->g, f->b, f->a);
         glPopMatrix();
         sprintf(bufferText, "Argent : %d\nVague : %d/10\n>Touche \"H\" pour l'aide", g->money, g->nbWave);
         displayText(f->font, (unsigned char*)bufferText, -(f->wInfosGame)+(f->xText), (f->hInfosGame)+(f->yText), 255, 255, 255);
@@ -91,7 +93,7 @@ void drawHelp(Interface* f){
     glPushMatrix();
         glPushMatrix();
             glScalef(f->wFull, f->hFull, 0);
-            drawSquare(110, 162, 66, 235);
+            drawSquare(f->r, f->g, f->b, f->a);
         glPopMatrix();
         sprintf(bufferText, "Aide Flower Tower :\n\nA / Z / E / R + clic gauche : construire une tour\n> A : tour rouge\n> Z : tour violette\n> E : tour jaune\n> R : tour bleue\n\nQ / S / D + clic gauche : construire un batiment\n> Q : radar\n> S : usine\n> D : stock\n\nClic gauche sur construction : consulter les informations\n\nClic droit sur construction : detruire une construction");
         displayText(f->font, (unsigned char*)bufferText, -(f->wFull)+(f->xText), (f->hFull)+(f->yText), 255, 255, 255);
@@ -100,7 +102,7 @@ void drawHelp(Interface* f){
     glPushMatrix();
         glTranslatef(f->xLogo2, f->yLogo2, 0);
         glScalef(f->wLogo2, f->hLogo2, 0);
-        drawPicture(f->spriteLogo);
+        drawPicture(f->spriteLogo, 255, 255, 255, 255);
     glPopMatrix();
 }
 
@@ -109,7 +111,7 @@ void drawEnd(Interface* f){
     glPushMatrix();
         glPushMatrix();
             glScalef(f->wFull, f->hFull, 0);
-            drawSquare(0, 0, 0, 200);
+            drawSquare(f->r, f->g, f->b, f->a);
         glPopMatrix();
         sprintf(bufferText, "C'est la fin !");
         displayText(f->font, (unsigned char*)bufferText, 0, 0, 255, 255, 255);
@@ -122,7 +124,7 @@ void drawInfosConstructions(Interface* f){
             glTranslatef(f->xInfosConstructions, f->yInfosConstructions, 0);
             glPushMatrix();
                 glScalef(f->wInfosConstructions, f->hInfosConstructions, 0);
-                drawSquare(110, 162, 66, 205);
+                drawSquare(f->r, f->g, f->b, f->a);
             glPopMatrix();
             displayText(f->font, (unsigned char*)(f->infosConstructions), -(f->wInfosConstructions)+(f->xText), (f->hInfosConstructions)+(f->yText), 255, 255, 255);
         glPopMatrix();

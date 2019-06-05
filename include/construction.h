@@ -6,5 +6,7 @@ void giveBonusTower(Tower* t, BuildingList* listBuildings);
 void removeBonusTowers(Building* b, TowerList* listTowers);
 void removeBonusTower(Tower* t, BuildingList* listBuildings);
 int constructionIntersection(BuildingList listBuildings, TowerList listTowers, float xNew, float yNew, int sizeNew, shape shapeNew);
+void towerConstructible(Tower* towerToBuild, BuildingList buildings, TowerList towers, Node* nodes, Game* game, int x, int y, unsigned int WINDOW_WIDTH, unsigned int WINDOW_HEIGHT);
+void buildingConstructible(Building* buildingToBuild, BuildingList buildings, TowerList towers, Node* nodes, Game* game, int x, int y, unsigned int WINDOW_WIDTH, unsigned int WINDOW_HEIGHT);
 
 #endif

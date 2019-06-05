@@ -10,12 +10,14 @@ typedef enum{
 typedef struct Building {
 	buildingType type; // Type
 	float x, y; // Positions
+	int constructible; // Construisible
 
 	int range; // Portée
 	int cost; // Coût
 
 	GLuint sprite; // Sprite
-	int r, g, b; // Couleur
+	int r, g, b, a; // Couleurs
+	int rRange, gRange, bRange, aRange; // Couleurs portée
 	int size; // Taille
 	shape shape; // Forme
 
@@ -29,6 +31,7 @@ void freeBuilding(Building* b);
 void freeBuildings(BuildingList* list);
 void deleteBuilding(Building* b, BuildingList* list);
 void drawBuildings(BuildingList list);
+void drawBuilding(Building* b);
 void drawRangeBuildings(BuildingList list);
 void drawInfosBuilding(Building* b, char* infosConstructions);
 Building* buildingSelected(BuildingList list, float x, float y);

@@ -11,7 +11,7 @@ typedef enum{
 }shape;
 
 GLuint loadTexture (char* fileName);
-void drawPicture(GLuint texture);
+void drawPicture(GLuint texture, int r, int g, int b, int a);
 void drawCircle(int red, int green, int blue, int alpha);
 void drawSquare(int red, int green, int blue, int alpha);
 void displayText(void *font, unsigned char* text, float x, float y, int red, int green, int blue);

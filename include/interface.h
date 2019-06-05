@@ -22,6 +22,8 @@ typedef struct Interface{
 
 	int xText, yText;
 	void* font;
+
+	int r, g, b, a; // Couleur
 }Interface;
 
 Interface* allocInterface(float GL_VIEW_WIDTH, float GL_VIEW_HEIGHT);

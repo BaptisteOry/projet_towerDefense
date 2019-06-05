@@ -33,29 +33,32 @@ Building* allocBuilding(buildingType type, float x, float y){
 		exit(EXIT_FAILURE);
 	}
 
-    b->type = type; // Type
-	b->x = x; // Position x
-	b->y = y; // Position y
+    b->type = type;
+	b->x = x;
+	b->y = y;
+	b->constructible = 0;
 	b->range= 100;
 	switch(type){
 		case RADAR :
 			b->cost = 100;
-			b->r = 255; b->g = 236; b->b = 180;
+			b->rRange = 255; b->gRange = 236; b->bRange = 180;
 			b->sprite = loadTexture("images/building_radar.png");
 			break;
 		case FACTORY:
 			b->cost = 50;
-			b->r = 135; b->g = 108; b->b = 80;
+			b->rRange = 135; b->gRange = 108; b->bRange = 80;
 			b->sprite = loadTexture("images/building_factory.png");
 			break;
 		case STOCK:
 			b->cost = 25;
-			b->r = 229; b->g = 119; b->b = 1;
+			b->rRange = 229; b->gRange = 119; b->bRange = 1;
 			b->sprite = loadTexture("images/building_stock.png");
 			break;
 		default:
 			break;
 	}
+	b->aRange = 75;
+	b->r = 255; b->g = 255; b->b = 255; b->a = 255;
 	b->size = 25;
 	b->shape = SQUARE;
 	b->next = NULL;
@@ -123,11 +126,19 @@ void drawBuildings(BuildingList list){
 		glPushMatrix();
 			glTranslatef(list->x, list->y, 0);
 			glScalef(list->size, list->size, 0);
-			drawPicture(list->sprite);
+			drawPicture(list->sprite, list->r, list->g, list->b, list->a);
 		glPopMatrix();
 
         list = list->next;
     }
+}
+
+void drawBuilding(Building* b){
+    glPushMatrix();
+		glTranslatef(b->x, b->y, 0);
+		glScalef(b->size, b->size, 0);
+		drawPicture(b->sprite, b->r, b->g, b->b, b->a);
+	glPopMatrix();
 }
 
 void drawRangeBuildings(BuildingList list){
@@ -135,7 +146,7 @@ void drawRangeBuildings(BuildingList list){
 		glPushMatrix();
 			glTranslatef(list->x, list->y, 0);
 			glScalef(list->range, list->range, 0);
-			drawCircle(list->r, list->g, list->b, 75);
+			drawCircle(list->rRange, list->gRange, list->bRange, list->aRange);
 		glPopMatrix();
 
         list = list->next;
