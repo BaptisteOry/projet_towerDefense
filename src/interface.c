@@ -28,8 +28,9 @@ Interface* allocInterface(float GL_VIEW_WIDTH, float GL_VIEW_HEIGHT){
     i->xLogo2 = GL_VIEW_WIDTH-(i->wLogo2)-5; i->yLogo2 = -GL_VIEW_HEIGHT+(i->hLogo2)+5;
     i->spriteLogo = loadTexture("images/title.png");
 
-    i->wQuit = 22; i->hQuit = 10;
-    i->xQuit = GL_VIEW_WIDTH-(i->wQuit)-5; i->yQuit = -GL_VIEW_HEIGHT+(i->hQuit)+5;
+    i->xBegin = -175; i->yBegin = 20;
+    i->wBeginB = 45; i->hBeginB = 10;
+    i->xBeginB = 0; i->yBeginB = -20;
 
     i->wInfosGame = 58; i->hInfosGame = 16;
     i->xInfosGame = -GL_VIEW_WIDTH+(i->wInfosGame)+5; i->yInfosGame = GL_VIEW_HEIGHT-(i->hInfosGame)-40;
@@ -37,12 +38,16 @@ Interface* allocInterface(float GL_VIEW_WIDTH, float GL_VIEW_HEIGHT){
     i->wInfosConstructions = 50; i->hInfosConstructions = 35;
     i->xInfosConstructions = GL_VIEW_WIDTH-(i->wInfosConstructions)-5; i->yInfosConstructions = GL_VIEW_HEIGHT-(i->hInfosConstructions)-5;
 
+    i->wQuitB = 22; i->hQuitB = 10;
+    i->xQuitB = GL_VIEW_WIDTH-(i->wQuitB)-5; i->yQuitB = -GL_VIEW_HEIGHT+(i->hQuitB)+5;
+
     i->wFull = GL_VIEW_WIDTH; i->hFull = GL_VIEW_HEIGHT; 
 
     i->xText = 5; i->yText = -10; 
     i->font = GLUT_BITMAP_9_BY_15;
 
     i->r = 110; i->g = 162; i->b = 66; i->a = 235;
+    i->r2 = 255; i->g2 = 247; i->b2 = 193; i->a2 = 255;
 
     strcpy(i->infosConstructions, "");
 
@@ -58,6 +63,34 @@ void freeInterface(Interface* i){
     }
 }
 
+void drawBeginning(Interface* f){
+    char bufferText[255] = "";
+    glPushMatrix();
+        glPushMatrix();
+            glScalef(f->wFull, f->hFull, 0);
+            drawSquare(f->r, f->g, f->b, 255);
+        glPopMatrix();
+        sprintf(bufferText, "Bienvenue sur Flower Tower !\nVous vous appretez a combattre les emotions negatives grace aux fleurs.");
+        displayText(f->font, (unsigned char*)bufferText, f->xBegin, f->yBegin, 255, 255, 255);
+    glPopMatrix();
+    // Bouton jouer
+    glPushMatrix();
+        glTranslatef(f->xBeginB, f->yBeginB, 0);
+        glPushMatrix();
+            glScalef(f->wBeginB, f->hBeginB, 0);
+            drawSquare(f->r2, f->g2, f->b2, 255);
+        glPopMatrix();
+        sprintf(bufferText, "Jouer");
+        displayText(f->font, (unsigned char*)bufferText, -12, -2, f->r, f->g, f->b);
+    glPopMatrix();
+    // Logo
+    glPushMatrix();
+        glTranslatef(f->xLogo2, f->yLogo2, 0);
+        glScalef(f->wLogo2, f->hLogo2, 0);
+        drawPicture(f->spriteLogo, 255, 255, 255, 255);
+    glPopMatrix();
+}
+
 void drawGameElements(Interface* f, Game* g){
     char bufferText[255] = "";
     // Logo
@@ -68,9 +101,9 @@ void drawGameElements(Interface* f, Game* g){
     glPopMatrix();
     // Bouton quitter
     glPushMatrix();
-        glTranslatef(f->xQuit, f->yQuit, 0);
+        glTranslatef(f->xQuitB, f->yQuitB, 0);
         glPushMatrix();
-            glScalef(f->wQuit, f->hQuit, 0);
+            glScalef(f->wQuitB, f->hQuitB, 0);
             drawSquare(f->r, f->g, f->b, 255);
         glPopMatrix();
         sprintf(bufferText, "Quitter");
@@ -131,8 +164,15 @@ void drawInfosConstructions(Interface* f){
     }
 }
 
+int beginSelected(Interface* f, float x, float y){
+    if(isSquareIntersectsRectangle(x, y, f->xBeginB, f->yBeginB, 0, f->wBeginB, f->hBeginB)){
+        return 1;
+    }
+    return 0;
+}
+
 int quitSelected(Interface* f, float x, float y){
-    if(isSquareIntersectsRectangle(x, y, f->xQuit, f->yQuit, 0, f->wQuit, f->hQuit)){
+    if(isSquareIntersectsRectangle(x, y, f->xQuitB, f->yQuitB, 0, f->wQuitB, f->hQuitB)){
         return 1;
     }
     return 0;

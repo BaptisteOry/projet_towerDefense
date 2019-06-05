@@ -6,10 +6,10 @@ typedef struct Game{
 
 	int nbWave; // Nombre de vagues
 	int nbMonstersPerWave; // Nombre de monstres par vagues
-	int timeWave ; //Temps entre chaque vague
-    int timeAddWave; //Temps d'apparition des monstres pour une vague
+	int timeWave ; // Temps entre chaque vague
+    int timeAddWave; // Temps d'apparition des monstres pour une vague
 
-	int end;
+	int status; // 0->begin,1->play,2->pause,3->end
 }Game;
 
 Game* allocGame();

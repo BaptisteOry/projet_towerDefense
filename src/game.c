@@ -28,7 +28,7 @@ Game* allocGame(){
     g->timeWave = 10000; // 10s entre chaque vague
     g->timeAddWave = 500; // 500ms entre les apparitions de monstre
 
-    g->end = 0;
+    g->status = 0;
 
     return g;
 }
