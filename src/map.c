@@ -11,8 +11,9 @@
 #include "../include/map.h"
 #include "../include/imageMap.h"
 #include "../include/operations.h"
+#include "../include/node.h"
 
-void itdCheck(char* itdFile, ImageMap* map, ItdEltsInfos** infos, Node** nodes, Link** links) {
+void itdCheck(char* itdFile, ImageMap* map, ItdEltsInfos** infos, Node** nodes, Link** links, int* nbOfNodes) {
 
 	// ITD file elements
 	char code[5];
@@ -112,6 +113,7 @@ void itdCheck(char* itdFile, ImageMap* map, ItdEltsInfos** infos, Node** nodes, 
 	// Read & store nodes description
 	fscanf(file, "%d", &nodesNumber);
 	printf("%d\n", nodesNumber);
+	*nbOfNodes = nodesNumber;
 	int nodesCount = 0;
 	//graph->nodes = malloc(sizeof(Node));
 	//if(graph->nodes == NULL) {
@@ -378,33 +380,6 @@ void addInfo(ItdEltsInfos* info, InfosList* list){
     }
 }
 
-Node* allocNode(int id, int type, int x, int y) {
-	Node* node = (Node*) malloc(sizeof(Node));
-	if(node == NULL) {
-		printf("allocNode : erreur d'allocation de mémoire\n");
-		exit(EXIT_FAILURE);
-	}
-	node->id = id;
-	node->type = type;
-	node->x = x;
-	node->y = y;
-	node->nextNode = NULL;
-	node->linkedNodes = NULL;
-	return node;
-}
-
-void addNode(Node* node, NodeList* list){
-    if(*list == NULL){
-        *list = node;
-    }else{
-        Node *temp = *list;
-        while(temp->nextNode != NULL){
-            temp = temp->nextNode;
-        }
-        temp->nextNode = node;
-    }
-}
-
 Link* allocLink(int id1, int id2) {
 	Link* link = (Link*) malloc(sizeof(Link));
 	if(link == NULL) {
@@ -466,41 +441,3 @@ void testlinks(Node* nodes) {
 	}
 }
 
-int doesCircleIntersectsPath(float x, float y, int size, Node* nodes, unsigned int WINDOW_WIDTH, unsigned int WINDOW_HEIGHT) {
-    printf("oui\n");
-    Node* temp = nodes;
-    float X = 10*x/WINDOW_WIDTH-0.5;
-    float Y = 6*y/WINDOW_HEIGHT-0.5;
-    while(temp != NULL) {
-        if(X>temp->x-1 && X<temp->x+1) {
-            printf("ouii\n");
-            if(Y>temp->y-1 && Y<temp->y+1) {
-                printf("ouiii\n");
-                return 1;
-            }
-            Node* linked = temp->linkedNodes;
-            while(linked != NULL) {
-                printf("ouiiii\n");
-                if((Y>linked->y && Y<temp->y) || (Y>temp->y && Y<linked->y)) {
-                    return 1;
-                }
-                linked = linked->nextNode;
-            }
-        }
-        else if(Y>temp->y-1 && Y<temp->y+1) {
-            printf("noon\n");
-            if(X>temp->x-1 && X<temp->x+1) {
-                return 1;
-            }
-            Node* linked = temp->linkedNodes;
-            while(linked != NULL) {
-                if((X>linked->x && X<temp->x) || (X>temp->x && X<linked->x)) {
-                    return 1;
-                }
-                linked = linked->nextNode;
-            }
-        }
-        temp = temp->nextNode;
-    }
-    return 0;
-}

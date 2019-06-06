@@ -7,7 +7,7 @@ SRCDIR	= src/
 INCLUDEDIR	= include/
 OBJDIR	= obj/
 BIN    = $(BINDIR)towerdef.itd
-OBJ    = $(OBJDIR)main.o $(OBJDIR)game.o $(OBJDIR)interface.o $(OBJDIR)monster.o $(OBJDIR)building.o $(OBJDIR)tower.o $(OBJDIR)construction.o $(OBJDIR)imageMap.o $(OBJDIR)map.o $(OBJDIR)display.o $(OBJDIR)operations.o
+OBJ    = $(OBJDIR)main.o $(OBJDIR)game.o $(OBJDIR)interface.o $(OBJDIR)monster.o $(OBJDIR)building.o $(OBJDIR)tower.o $(OBJDIR)construction.o $(OBJDIR)imageMap.o $(OBJDIR)map.o $(OBJDIR)display.o $(OBJDIR)operations.o $(OBJDIR)node.o
 
 RM     = rm -f
 DIRNAME = $(shell basename $$PWD)
@@ -20,7 +20,7 @@ all : $(OBJ)
 	@echo "            to execute type: $(BIN) &"
 	@echo "--------------------------------------------------------------"
 
-$(OBJDIR)main.o : $(SRCDIR)main.c $(SRCDIR)display.c $(INCLUDEDIR)display.h $(SRCDIR)operations.c $(INCLUDEDIR)operations.h $(SRCDIR)monster.c $(INCLUDEDIR)monster.h $(SRCDIR)building.c $(INCLUDEDIR)building.h $(SRCDIR)tower.c $(INCLUDEDIR)tower.h $(SRCDIR)construction.c $(INCLUDEDIR)construction.h $(SRCDIR)game.c $(INCLUDEDIR)game.h $(SRCDIR)interface.c $(INCLUDEDIR)interface.h $(SRCDIR)imageMap.c $(INCLUDEDIR)imageMap.h $(SRCDIR)map.c $(INCLUDEDIR)map.h
+$(OBJDIR)main.o : $(SRCDIR)main.c $(SRCDIR)display.c $(INCLUDEDIR)display.h $(SRCDIR)operations.c $(INCLUDEDIR)operations.h $(SRCDIR)monster.c $(INCLUDEDIR)monster.h $(SRCDIR)building.c $(INCLUDEDIR)building.h $(SRCDIR)tower.c $(INCLUDEDIR)tower.h $(SRCDIR)construction.c $(INCLUDEDIR)construction.h $(SRCDIR)game.c $(INCLUDEDIR)game.h $(SRCDIR)interface.c $(INCLUDEDIR)interface.h $(SRCDIR)imageMap.c $(INCLUDEDIR)imageMap.h $(SRCDIR)map.c $(INCLUDEDIR)map.h $(SRCDIR)node.c $(INCLUDEDIR)node.h
 	@echo "compile main"
 	mkdir -p `dirname $@`
 	$(CC) -o $@ -c $< $(CFLAGS)
@@ -85,6 +85,12 @@ $(OBJDIR)operations.o : $(SRCDIR)operations.c $(INCLUDEDIR)operations.h $(SRCDIR
 	mkdir -p `dirname $@`
 	$(CC) -o $@ -c $< $(CFLAGS)
 	@echo "done..."	
+
+$(OBJDIR)node.o : $(SRCDIR)node.c $(INCLUDEDIR)node.h
+	@echo "compile node"
+	mkdir -p `dirname $@`
+	$(CC) -o $@ -c $< $(CFLAGS)
+	@echo "done..."
 
 clean :	
 	@echo "**************************"

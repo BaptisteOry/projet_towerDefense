@@ -1,6 +1,8 @@
 #ifndef MONSTER_H__
 #define MONSTER_H__
 
+#include "../include/node.h"
+
 /// \enumeration types de monstres
 typedef enum{
 	MSAD, MANGRY, MNUMBER
@@ -15,6 +17,7 @@ typedef struct Monster {
 	monsterType type; // Type
 	float x, y; // Positions
 	direction direction;
+	Node* path; // Chemin
 
 	int loot;
 	int healthPoints;
@@ -38,8 +41,11 @@ void goUp(Monster* m);
 void goDown(Monster* m);
 void goLeft(Monster* m);
 void goRight(Monster* m);
-void moveMonster(Monster* m, Node* nodes, unsigned int WINDOW_WIDTH, unsigned int WINDOW_HEIGHT);
-direction chooseDirection(Monster* m, Node* nodes, int nodeId);
-int testOnNode(Monster* m, Node* nodes, unsigned int WINDOW_WIDTH, unsigned int WINDOW_HEIGHT);
+direction directionAB(Node* A, Node* B);
+Monster* moveMonsterAB(Monster* m, Node* nodes, float GL_VIEW_WIDTH, float GL_VIEW_HEIGHT);
+void initializeMonsterPath(Monster* m, Node* nodes, int nbOfNodes);
+void initializeMonsterPosition(Monster* m, float GL_VIEW_WIDTH, float GL_VIEW_HEIGHT);
+void moveMonsters(MonsterList* monsters, Node* nodes, float GL_VIEW_WIDTH, float GL_VIEW_HEIGHT);
+int passNodeCenter(Monster* m, Node* n, float GL_VIEW_WIDTH, float GL_VIEW_HEIGHT);
 
 #endif

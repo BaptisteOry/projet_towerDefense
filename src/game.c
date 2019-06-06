@@ -13,6 +13,7 @@
 #include "../include/monster.h"
 #include "../include/tower.h"
 #include "../include/game.h"
+#include "../include/node.h"
 
 Game* allocGame(){
     Game* g = (Game*) malloc(sizeof(Game));
@@ -38,13 +39,15 @@ void freeGame(Game* g){
     }
 }
 
-void addWave(Game* g, MonsterList* list, int counter){
+void addWave(Game* g, MonsterList* list, int counter, Node* nodes, int nbOfNodes, float GL_VIEW_WIDTH, float GL_VIEW_HEIGHT){
     if((counter%(g->timeWave) < (g->nbMonstersPerWave)*(g->timeAddWave)) && ((counter%(g->timeWave))%(g->timeAddWave) == 0) && (counter > 10000)){
         if(counter%(g->timeWave) == 0){
             (g->nbWave) += 1;
         }
         Monster* tempM;
         tempM = allocMonster(randomRange(0, MNUMBER-1), -245, -75);
+        initializeMonsterPath(tempM, nodes, nbOfNodes);
+        initializeMonsterPosition(tempM, GL_VIEW_WIDTH, GL_VIEW_HEIGHT);
         tempM->loot *= 1+(g->nbWave-1)*0.25;
         tempM->healthPoints *= 1+(g->nbWave-1)*0.25;
         addMonster(tempM, list);
