@@ -21,6 +21,8 @@ typedef struct Monster {
 
 	int loot;
 	int healthPoints;
+	int healthPointsRatio;
+	int sizeBarW, sizeBarH;
 	int speed;
 
 	GLuint sprite; // Sprite

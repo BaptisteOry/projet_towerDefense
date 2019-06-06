@@ -30,18 +30,20 @@ Monster* allocMonster(monsterType type, float x, float y){
 		case MSAD :
 			m->healthPoints = 10;
 			m->speed = 10;
-			m->r = 255; m->g = 0; m->b = 0;
+			m->r = 255; m->g = 255; m->b = 255;
 			m->sprite = loadTexture("images/monster_sad.png");
 			break;
 		case MANGRY:
 			m->healthPoints = 15;
 			m->speed = 20;
-			m->r = 0; m->g = 255; m->b = 0;
+			m->r = 255; m->g = 255; m->b = 255;
 			m->sprite = loadTexture("images/monster_angry.png");
 			break;
 		default:
 			break;
 	}
+	m->sizeBarW = 14; m->sizeBarH = 2;
+	m->healthPointsRatio = m->healthPoints;
 	m->size = 20;
 	m->shape = CIRCLE;
 	m->next = NULL;
@@ -106,11 +108,27 @@ void deleteMonster(Monster* m, MonsterList* list){
 
 void drawMonsters(MonsterList list){
     while(list != NULL){
-		glPushMatrix();
-			glTranslatef(list->x, list->y, 0);
-			glScalef(list->size, list->size, 0);
-			drawCircle(list->r, list->g, list->b, 255);
-			drawPicture(list->sprite);
+    	glPushMatrix();
+    		glTranslatef(list->x, list->y, 0);
+			glPushMatrix();
+				glScalef(list->size, list->size, 0);
+				drawCircle(list->r, list->g, list->b, 255);
+				drawPicture(list->sprite, 255, 255, 255, 255);
+			glPopMatrix();
+			// Bar points de santé
+			glPushMatrix();
+				glTranslatef(0, (list->size)+6, 0);
+				glPushMatrix();
+					glScalef(list->sizeBarW, list->sizeBarH, 0);
+					drawSquare(0, 0, 0, 255);
+				glPopMatrix();
+				glPushMatrix();
+					int healthPointsBar = ((list->sizeBarW)*(list->healthPoints))/(list->healthPointsRatio);
+					glTranslatef((healthPointsBar-(list->sizeBarW)), 0, 0);
+					glScalef(healthPointsBar, list->sizeBarH, 0);
+					(healthPointsBar<(list->sizeBarW)/2) ? drawSquare(255, 0, 0, 255) : drawSquare(0, 255, 0, 255);
+				glPopMatrix();
+			glPopMatrix();
 		glPopMatrix();
 
         list = list->next;

@@ -54,12 +54,12 @@ GLuint loadTexture (char* fileName){
     return texture;
 }
 
-void drawPicture(GLuint texture){
+void drawPicture(GLuint texture, int r, int g, int b, int a){
     glEnable(GL_TEXTURE_2D);
     glBindTexture(GL_TEXTURE_2D, texture);
 
     glBegin(GL_QUADS);
-        glColor3ub(255, 255, 255);
+        glColor4ub(r, g, b, a);
 
         glTexCoord2f(0, 1);
         glVertex2f(-1, -1);

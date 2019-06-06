@@ -35,9 +35,10 @@ Tower* allocTower(towerType type, float x, float y){
 		exit(EXIT_FAILURE);
 	}
 
-    t->type = type; // Type
-	t->x = x; // Position x
-	t->y = y; // Position y
+    t->type = type;
+	t->x = x;
+	t->y = y;
+	t->constructible = 0;
 	t->powerBonus = 1;
 	t->rangeBonus = 1;
 	t->rateBonus = 1;
@@ -47,7 +48,7 @@ Tower* allocTower(towerType type, float x, float y){
 			t->range = 135;
 			t->rate = 1000; // Toutes les secondes
 			t->cost = 50;
-			t->r = 217; t->g = 55; t->b = 30;
+			t->rRange = 217; t->gRange = 55; t->bRange = 30;
 			t->sprite = loadTexture("images/tower_red.png");
 			break;
 		case TPURPLE:
@@ -55,7 +56,7 @@ Tower* allocTower(towerType type, float x, float y){
 			t->range = 110;
 			t->rate = 200; // Toutes les 200ms
 			t->cost = 40;
-			t->r = 130; t->g = 78; t->b = 139;
+			t->rRange = 130; t->gRange = 78; t->bRange = 139;
 			t->sprite = loadTexture("images/tower_purple.png");
 			break;
 		case TYELLOW:
@@ -63,7 +64,7 @@ Tower* allocTower(towerType type, float x, float y){
 			t->range = 95;
 			t->rate = 600; // Toutes les 600ms
 			t->cost = 30;
-			t->r = 249; t->g = 171; t->b = 60;
+			t->rRange = 249; t->gRange = 171; t->bRange = 60;
 			t->sprite = loadTexture("images/tower_yellow.png");
 			break;
 		case TBLUE:
@@ -71,12 +72,14 @@ Tower* allocTower(towerType type, float x, float y){
 			t->range = 80;
 			t->rate = 400; // Toutes les 400ms
 			t->cost = 20;
-			t->r = 43; t->g = 117; t->b = 140;
+			t->rRange = 43; t->gRange = 117; t->bRange = 140;
 			t->sprite = loadTexture("images/tower_blue.png");
 			break;
 		default:
 			break;
 	}
+	t->aRange = 75;
+	t->r = 255; t->g = 255; t->b = 255; t->a = 255;
 	t->size = 25;
 	t->shape = CIRCLE;
 	t->next = NULL;
@@ -96,13 +99,14 @@ void addTower(Tower* t, TowerList* list){
     }
 }
 
-void freeTower(Tower* t){
+Tower* freeTower(Tower* t){
 	if(t != NULL){
 		if(t->sprite){
       		glDeleteTextures(1, &(t->sprite));
     	}
     	free(t);
     }
+    return NULL;
 }
 
 void freeTowers(TowerList* list){
@@ -144,7 +148,7 @@ void drawTowers(TowerList list){
 		glPushMatrix();
 			glTranslatef(list->x, list->y, 0);
 			glScalef(list->size, list->size, 0);
-			drawPicture(list->sprite);
+			drawPicture(list->sprite, list->r, list->g, list->b, list->a);
 		glPopMatrix();
 
         list = list->next;
@@ -152,12 +156,13 @@ void drawTowers(TowerList list){
 }
 
 void drawTower(Tower* t){
-    glPushMatrix();
-		glTranslatef(t->x, t->y, 0);
-		glScalef(t->size, t->size, 0);
-		drawCircle(t->r, t->g, t->b, 255);
-		drawPicture(t->sprite);
-	glPopMatrix();
+	if(t != NULL){
+	    glPushMatrix();
+			glTranslatef(t->x, t->y, 0);
+			glScalef(t->size, t->size, 0);
+			drawPicture(t->sprite, t->r, t->g, t->b, t->a);
+		glPopMatrix();
+	}
 }
 
 void drawRangeTowers(TowerList list){
@@ -165,7 +170,7 @@ void drawRangeTowers(TowerList list){
 		glPushMatrix();
 			glTranslatef(list->x, list->y, 0);
 			glScalef((list->range)*(list->rangeBonus), (list->range)*(list->rangeBonus), 0);
-			drawCircle(list->r, list->g, list->b, 75);
+			drawCircle(list->rRange, list->gRange, list->bRange, list->aRange);
 		glPopMatrix();
 
         list = list->next;

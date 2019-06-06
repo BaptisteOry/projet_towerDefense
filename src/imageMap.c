@@ -101,6 +101,6 @@ int testPixel(int pixel){
 void drawImageMap(ImageMap* imageMap, int width, int height){
   glPushMatrix();
       glScalef(width, height, 0);
-      drawPicture(imageMap->sprite);
+      drawPicture(imageMap->sprite, 255, 255, 255, 255);
   glPopMatrix();
 }
