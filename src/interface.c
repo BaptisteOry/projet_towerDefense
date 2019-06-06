@@ -147,7 +147,7 @@ void drawEnd(Interface* f, Game* g){
             drawSquare(f->r, f->g, f->b, 255);
         glPopMatrix();
         if(g->lose == 1){
-            sprintf(bufferText, "Vous n'avez pas sauve le monde des emotions negatives.\nReessayez enncore une fois !");
+            sprintf(bufferText, "Vous n'avez pas sauve le monde des emotions negatives.\nReessayez encore une fois !");
         } else {
             sprintf(bufferText, "Bravo ! Vous avez gagne !");
         }

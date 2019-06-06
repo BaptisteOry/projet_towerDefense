@@ -16,18 +16,15 @@ typedef struct Link {
 	struct Link* nextLink;
 } Link, *LinkList;
 
-typedef struct Graph {
-	Node* nodes;
-	Link* links;
-} Graph;
-
 int doesCircleIntersectsPath(float x, float y, int size, Node* nodes, float GL_VIEW_WIDTH, float GL_VIEW_HEIGHT);
 int findStart(Node* nodes);
 int findEnd(Node* nodes);
 Node* idToNode(int id, Node* nodes);
-
 Node* allocNode(int id, int type, int x, int y);
-
 void addNode(Node* node, NodeList* list);
+Link* allocLink(int id1, int id2);
+void addLink(Link* link, LinkList* list);
+void createLinkedNodeList(Node* nodes, Link* links);
+void testlinks(Node* nodes);
 
 #endif

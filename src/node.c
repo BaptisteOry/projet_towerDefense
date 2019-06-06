@@ -14,8 +14,6 @@
 
 int doesCircleIntersectsPath(float x, float y, int size, Node* nodes, float GL_VIEW_WIDTH, float GL_VIEW_HEIGHT) {
     Node* temp = nodes;
-    //float X = 10*x/WINDOW_WIDTH-0.5;
-    //float Y = 6*y/WINDOW_HEIGHT-0.5;
     float X = 10*(x+GL_VIEW_WIDTH)/(2*GL_VIEW_WIDTH)-0.5;
 	float Y = 6*(-y+GL_VIEW_HEIGHT)/(2*GL_VIEW_HEIGHT)-0.5;
     while(temp != NULL) {
@@ -97,5 +95,60 @@ void addNode(Node* node, NodeList* list){
             temp = temp->nextNode;
         }
         temp->nextNode = node;
+    }
+}
+
+Link* allocLink(int id1, int id2) {
+    Link* link = (Link*) malloc(sizeof(Link));
+    if(link == NULL) {
+        printf("allocLink : erreur d'allocation de mémoire\n");
+        exit(EXIT_FAILURE);
+    }
+    link->nodeId1 = id1;
+    link->nodeId2 = id2;
+    link->nextLink = NULL;
+    return link;
+}
+
+void addLink(Link* link, LinkList* list){
+    if(*list == NULL){
+        *list = link;
+    }else{
+        Link *temp = *list;
+        while(temp->nextLink != NULL){
+            temp = temp->nextLink;
+        }
+        temp->nextLink = link;
+    }
+}
+
+void createLinkedNodeList(Node* nodes, Link* links) {
+    Node* tempNode = nodes;
+    Link* tempLink = links;
+    while(tempNode != NULL) {
+        while(tempLink != NULL && (tempLink->nodeId1 == tempNode->id)) {
+            Node* temp = nodes;
+            while((temp != NULL) && (temp->id != tempLink->nodeId2)) {
+                temp = temp->nextNode;
+            }
+            Node* node = allocNode(temp->id, temp->type, temp->x, temp->y);
+            addNode(node, &(tempNode->linkedNodes));
+            tempLink=tempLink->nextLink;
+        }
+        tempNode = tempNode->nextNode;
+    }
+}
+
+void testlinks(Node* nodes) {
+    // Fonction temporaire pour tester
+    Node* temp = nodes;
+    while(temp != NULL) {
+        printf("node : %d\n", temp->id);
+        Node* link = temp->linkedNodes;
+        while(link != NULL) {
+            printf("%d\n", link->id);
+            link = link->nextNode;
+        }
+        temp = temp->nextNode;
     }
 }
