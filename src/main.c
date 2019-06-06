@@ -96,8 +96,7 @@ int main(int argc, char** argv){
     // Charger image ppm (placer dans l'image carte)
     loadImageMapPPM(&imageMap, imageMap01);
     // Vérification carte et itd
-    int nbOfNodes = 0;
-    itdCheck(itdFile, &imageMap, &infos, &nodes, &links, &nbOfNodes);
+    itdCheck(itdFile, &imageMap, &infos, &nodes, &links);
     createLinkedNodeList(nodes, links);
 
     // Vérification du ppm
