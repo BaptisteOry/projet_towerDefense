@@ -122,13 +122,13 @@ void drawGameElements(Interface* f, Game* g){
 }
 
 void drawHelp(Interface* f){
-    char bufferText[510] = "";
+    char bufferText[765] = "";
     glPushMatrix();
         glPushMatrix();
             glScalef(f->wFull, f->hFull, 0);
             drawSquare(f->r, f->g, f->b, f->a);
         glPopMatrix();
-        sprintf(bufferText, "Aide Flower Tower :\n\nA / Z / E / R + clic gauche : construire une tour\n> A : tour rouge\n> Z : tour violette\n> E : tour jaune\n> R : tour bleue\n\nQ / S / D + clic gauche : construire un batiment\n> Q : radar\n> S : usine\n> D : stock\n\nClic gauche sur construction : consulter les informations\n\nClic droit sur construction : detruire une construction");
+        sprintf(bufferText, "* Echap : quitter\n\n* A / Z / E / R + clic gauche : construire une fleur\n     * A : fleur rouge - puissante\n     * Z : fleur violette - equilibree\n     * E : fleur jaune - cadence rapide\n     * R : fleur bleue - longue portee\n\n* Q / S / D + clic gauche : construire un batiment\n     * Q : combi radar - augmente la portee des tours\n     * S : combi usine - augmente la puissance des tours\n     * D : combi stock - augmente la cadence de tir des tours\n\n* Clic gauche sur construction : consulter les informations\n\n* Clic droit sur construction : detruire une construction");
         displayText(f->font, (unsigned char*)bufferText, -(f->wFull)+(f->xText), (f->hFull)+(f->yText), 255, 255, 255);
     glPopMatrix();
     // Logo

@@ -14,13 +14,13 @@
 
 const char* getTowerTypeName(towerType tt){
    switch (tt){
-    	case TRED: return "Tour rouge";
+    	case TRED: return "Fleur rouge";
       		break;
-    	case TPURPLE: return "Tour violette";
+    	case TPURPLE: return "Fleur violette";
       		break;
-    	case TYELLOW: return "Tour jaune";
+    	case TYELLOW: return "Fleur jaune";
       		break;
-      	case TBLUE: return "Tour bleue";
+      	case TBLUE: return "Fleur bleue";
       		break;
       	default:
 			break;
@@ -62,7 +62,7 @@ Tower* allocTower(towerType type, float x, float y){
 		case TYELLOW:
 			t->power = 20;
 			t->range = 75;
-			t->rate = 400; // Toutes les 400ms
+			t->rate = 350; // Toutes les 350ms
 			t->cost = 35;
 			t->rRange = 249; t->gRange = 171; t->bRange = 60;
 			t->sprite = loadTexture("images/tower_yellow.png");

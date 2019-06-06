@@ -14,11 +14,11 @@
 
 const char* getBuildingTypeName(buildingType bt){
    switch (bt){
-    	case RADAR: return "Radar";
+    	case RADAR: return "Combi radar";
       		break;
-    	case FACTORY: return "Usine";
+    	case FACTORY: return "Combi usine";
       		break;
-    	case STOCK: return "Stock";
+    	case STOCK: return "Combi stock";
       		break;
       	default:
 			break;
