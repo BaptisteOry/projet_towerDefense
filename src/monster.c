@@ -24,8 +24,8 @@ Monster* allocMonster(monsterType type, float x, float y){
 	m->x = x; // Position x
 	m->y = y; // Position y
 	m->loot = 5; // Butin
-	m->direction = NONE;
-	m->path = NULL;
+	m->direction = NONE; // Direction
+	m->path = NULL; // Chemin à parcourrir
 	switch(type){
 		case MSAD :
 			m->healthPoints = 10;
@@ -173,8 +173,6 @@ direction directionAB(Node* A, Node* B) {
 
 Node* testOnNodeAB(Monster* m, Node* nodes, float GL_VIEW_WIDTH, float GL_VIEW_HEIGHT) {
 	Node* temp = nodes;
-	//float x = 10*(m->x+GL_VIEW_WIDTH)/(2*GL_VIEW_WIDTH);
-	//float y = 6*(-m->y+GL_VIEW_HEIGHT)/(2*GL_VIEW_HEIGHT);
 	while(temp != NULL) {
 		float x = (2*GL_VIEW_WIDTH)*(temp->x+0.5)/10 - GL_VIEW_WIDTH;
 		float y = GL_VIEW_HEIGHT - (2*GL_VIEW_HEIGHT)*(temp->y+0.5)/6;
@@ -249,7 +247,7 @@ void initializeMonsterPosition(Monster* m, float GL_VIEW_WIDTH, float GL_VIEW_HE
 
 int moveMonsters(MonsterList* monsters, Node* nodes, float GL_VIEW_WIDTH, float GL_VIEW_HEIGHT) {
 	Monster* temp = *monsters;
-	int youDied = 0;
+	int youDied = 0; // Pour gérer la fin de partie
 	while(temp != NULL) {
 		Monster* toDelete = NULL;
 		toDelete = moveMonsterAB(temp, nodes, GL_VIEW_WIDTH, GL_VIEW_HEIGHT);

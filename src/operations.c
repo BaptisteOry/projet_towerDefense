@@ -81,7 +81,7 @@ Node* dijkstra(Node* nodes) {
     int start = findStart(nodes);
     int end = findEnd(nodes);
 
-    int distances[MAX_NODES][2]; // Pour chaque noeud donne la distance + 1 s'il est marqué, 0 sinon
+    int distances[MAX_NODES][2]; // Pour chaque noeud donne la distance et 1 s'il est marqué, 0 sinon
     int previous[MAX_NODES];
 
     // Initialisation distances & previous
@@ -93,7 +93,6 @@ Node* dijkstra(Node* nodes) {
         temp = temp->nextNode;
         nbOfNodes++;
     }
-    //printf("Tu peux le faire <3\n");
     distances[start][0] = 0;
 
     temp = nodes;
@@ -114,6 +113,8 @@ Node* dijkstra(Node* nodes) {
             }
             link = link->nextNode;
         }
+
+        // Trouve le noeud le plus proche
         int minDist = INT_MAX;
         int minDistIndex = s;
         for(int i=0; i<nbOfNodes; i++) {
@@ -126,7 +127,7 @@ Node* dijkstra(Node* nodes) {
         temp = nodes;
     }
 
-    // Recréer le chemin
+    // Recréée le chemin
     Node* path = idToNode(end, nodes);
     int index = end;
 
@@ -149,13 +150,13 @@ void reverse (NodeList* n)
 {
    Node* inv = *n;
    Node* tete;
-   if (inv && inv->nextNode)       // Sinon il n'y a rien à faire
+   if (inv && inv->nextNode)
    {
-      tete = inv->nextNode;        // On mémorise la tete de sous liste
-      reverse (&(inv->nextNode));  // On inverse la sous-liste
-      tete->nextNode = inv;        // La tête actuelle de la liste passe en queue
-      *n = inv->nextNode;          // La tête de la sous liste inversée devient la nouvelle tête de liste
-      tete->nextNode->nextNode = NULL; // Important, sinon la LSC devient circulaire
+      tete = inv->nextNode;
+      reverse (&(inv->nextNode));
+      tete->nextNode = inv;
+      *n = inv->nextNode;
+      tete->nextNode->nextNode = NULL;
    }
 }
 
@@ -168,6 +169,8 @@ Node* randomPath(Node* nodes) {
     Node* previous = temp;
     Node* toAdd = allocNode(temp->id, temp->type, temp->x, temp->y);
     addNode(toAdd, &path);
+
+
     while(temp->type != 2) {
         if(temp->type != 1) {
             Node* list = nodes;
@@ -192,11 +195,14 @@ Node* randomPath(Node* nodes) {
                 links = links->nextNode;
             }
         }
+        // Si l'arrivé est un noeud voisin, forcer le choix de ce noeud
         else {
             while(links->id != end) {
                 links = links->nextNode;
             }
         }
+
+        // Empeche les demi-tours et de retourner au départ
         if(links->type != 1 && links->id != previous->id) {
             toAdd = allocNode(links->id, links->type, links->x, links->y);
             addNode(toAdd, &path);
