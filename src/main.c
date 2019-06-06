@@ -148,7 +148,11 @@ int main(int argc, char** argv){
             // Destruction monstres
             killMonsters(&monsters, &towers, counter);
             // Déplacement de la vague de monstre;
-            moveMonsters(&monsters, nodes, GL_VIEW_WIDTH, GL_VIEW_HEIGHT);
+            int youDied = moveMonsters(&monsters, nodes, GL_VIEW_WIDTH, GL_VIEW_HEIGHT);
+            if(youDied == 1) {
+                game->status = 3;
+            }
+
         } else if(game->status == 2){
             drawHelp(interface);
         } else if(game->status == 3){
@@ -206,9 +210,6 @@ int main(int argc, char** argv){
                     case SDL_MOUSEMOTION:
                         x = -GL_VIEW_WIDTH + GL_VIEW_WIDTH*2 * (e.button.x) / WINDOW_WIDTH;
                         y = -(-GL_VIEW_HEIGHT + GL_VIEW_HEIGHT*2 * (e.button.y) / WINDOW_HEIGHT);
-
-                        x2 = e.button.x;
-                        y2 = e.button.y;
 
                         if(towerToBuild != NULL){
                             towerToBuild->x = x; towerToBuild->y = y;
