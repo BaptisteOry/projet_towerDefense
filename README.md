@@ -1,11 +1,10 @@
 # Projet IMAC Tower Defense - Flower Tower
 
-Jeu de tower defense avec pour thème le flower power des années 70, dans le cadre de la formation ingénieur IMAC.
+Jeu de tower defense avec pour thème le flower power des années 60-70, dans le cadre de la formation ingénieur IMAC.
 
 ## Prérequis
 
-Le programme fonctionne sur Linux.
-Assurez-vous d'avoir SDL 1.2, OpenGL 2.0 et la librairie freeglut :
+Le programme fonctionne sur Linux. Assurez-vous d'avoir SDL 1.2, OpenGL 2.0 et la librairie freeglut :
 
 ```
 sudo apt-get update
@@ -15,7 +14,7 @@ sudo apt-get install libglu1-mesa-dev freeglut3-dev mesa-common-dev
 
 ## Démarrer
 
-À la racine du programme (/), compiler :
+À la racine du programme (/), compilez avec la commande :
 
 ```
 make
@@ -35,7 +34,7 @@ Survivez à toutes les vagues d'émotions négatives en plaçant des fleurs et e
 
 ### Commandes
 
-* H : aide
+* H : aide et pause
 * Echap : quitter
 * A / Z / E / R + clic gauche : construire une fleur
 	* A : fleur rouge - puissante
@@ -51,12 +50,13 @@ Survivez à toutes les vagues d'émotions négatives en plaçant des fleurs et e
 
 ## Version
 
-1.0 - juin 2019
+1.0 *- juin 2019*
 
 ## Crédits
 
 * **Baptiste Ory** - (https://github.com/BaptisteOry)
 * **Solène Mary-Vallée** - (https://github.com/SolHaine)
+
 *Programme réalisé au cours du deuxième semestre de la formation ingénieur IMAC pour les cours de "Synthèse d'image" et "Programmation et algorithmique".*
 
 ## Bon à savoir
