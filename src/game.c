@@ -43,7 +43,7 @@ void freeGame(Game* g){
 }
 
 void addWave(Game* g, MonsterList* list, int counter, Node* nodes, float GL_VIEW_WIDTH, float GL_VIEW_HEIGHT){
-    if(counter >= 0){
+    if(counter >= g->timeWave){
         if(counter%(g->timeWave) == 0 && (g->nbWave) < (g->lastWave)){
             (g->nbWave) += 1;
         }
