@@ -36,7 +36,7 @@ void freeInterface(Interface* i);
 void drawBeginning(Interface* f);
 void drawGameElements(Interface* f, Game* g);
 void drawHelp(Interface* f);
-void drawEnd(Interface* f);
+void drawEnd(Interface* f, Game* g);
 void drawInfosConstructions(Interface* f);
 int menuBSelected(Interface* f, float x, float y);
 int quitSelected(Interface* f, float x, float y);

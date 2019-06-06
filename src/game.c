@@ -25,10 +25,12 @@ Game* allocGame(){
     g->money = 500;
 
     g->nbWave = 0;
+    g->lastWave = 2;
     g->nbMonstersPerWave = 10;
     g->timeWave = 10000; // 10s entre chaque vague
     g->timeAddWave = 500; // 500ms entre les apparitions de monstre
 
+    g->lose = 0;
     g->status = 0;
 
     return g;
@@ -41,17 +43,20 @@ void freeGame(Game* g){
 }
 
 void addWave(Game* g, MonsterList* list, int counter, Node* nodes, float GL_VIEW_WIDTH, float GL_VIEW_HEIGHT){
-    if((counter%(g->timeWave) < (g->nbMonstersPerWave)*(g->timeAddWave)) && ((counter%(g->timeWave))%(g->timeAddWave) == 0) && (counter > 10000)){
-        if(counter%(g->timeWave) == 0){
+    if(counter >= 0){
+        if(counter%(g->timeWave) == 0 && (g->nbWave) < (g->lastWave)){
             (g->nbWave) += 1;
         }
-        Monster* tempM;
-        tempM = allocMonster(randomRange(0, MNUMBER-1), -245, -75);
-        initializeMonsterPath(tempM, nodes);
-        initializeMonsterPosition(tempM, GL_VIEW_WIDTH, GL_VIEW_HEIGHT);
-        tempM->loot *= 1+(g->nbWave-1)*0.25;
-        tempM->healthPoints *= 1+(g->nbWave-1)*0.25;
-        addMonster(tempM, list);
+        if((counter%(g->timeWave) < (g->nbMonstersPerWave)*(g->timeAddWave)) && ((counter%(g->timeWave))%(g->timeAddWave) == 0) && counter < (g->timeWave)*(g->lastWave)){
+            Monster* tempM;
+            tempM = allocMonster(randomRange(0, MNUMBER-1), -245, -75);
+            initializeMonsterPath(tempM, nodes);
+            initializeMonsterPosition(tempM, GL_VIEW_WIDTH, GL_VIEW_HEIGHT);
+            tempM->loot *= 1+(g->nbWave-1)*0.25;
+            tempM->healthPoints *= 1+(g->nbWave-1)*0.25;
+            tempM->healthPointsRatio = tempM->healthPoints;
+            addMonster(tempM, list);
+        }
     }
 }
 
@@ -79,5 +84,11 @@ void killMonsters(MonsterList* listMonsters, TowerList* listTowers, int counter)
                 toDelete = NULL;
             }
         }
+    }
+}
+
+void endGame(Game* g, MonsterList* list){
+    if((g->nbWave == g->lastWave && *list == NULL) || (g->lose == 1)){
+        g->status = 3;
     }
 }
