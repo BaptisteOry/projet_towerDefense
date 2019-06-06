@@ -93,16 +93,16 @@ int main(int argc, char** argv){
     float y = 0;
     int counter = 0;
 
-    // Charger image ppm (placer dans l'image carte)
+    // Charger image ppm (placer dans image carte)
     loadImageMapPPM(&imageMap, imageMap01);
+
     // Vérification carte et itd
     itdCheck(itdFile, &imageMap, &infos, &nodes, &links);
     createLinkedNodeList(nodes, links);
-
     // Vérification du ppm
     mapCheck(&imageMap, infos, nodes);
 
-    // Créer un nouveau jeu et l'interface
+    // Créer un nouveau jeu et une interface
     interface = allocInterface(GL_VIEW_WIDTH, GL_VIEW_HEIGHT);
     game = allocGame();
 
