@@ -44,34 +44,34 @@ Tower* allocTower(towerType type, float x, float y){
 	t->rateBonus = 1;
 	switch(type){
 		case TRED :
-			t->power = 100;
-			t->range = 135;
-			t->rate = 1000; // Toutes les secondes
+			t->power = 50;
+			t->range = 100;
+			t->rate = 2000; // Toutes les 2 secondes
 			t->cost = 50;
 			t->rRange = 217; t->gRange = 55; t->bRange = 30;
 			t->sprite = loadTexture("images/tower_red.png");
 			break;
 		case TPURPLE:
-			t->power = 50;
-			t->range = 110;
-			t->rate = 200; // Toutes les 200ms
-			t->cost = 40;
+			t->power = 30;
+			t->range = 90;
+			t->rate = 600; // Toutes les 600ms
+			t->cost = 65;
 			t->rRange = 130; t->gRange = 78; t->bRange = 139;
 			t->sprite = loadTexture("images/tower_purple.png");
 			break;
 		case TYELLOW:
-			t->power = 30;
-			t->range = 95;
-			t->rate = 600; // Toutes les 600ms
-			t->cost = 30;
+			t->power = 20;
+			t->range = 75;
+			t->rate = 400; // Toutes les 400ms
+			t->cost = 35;
 			t->rRange = 249; t->gRange = 171; t->bRange = 60;
 			t->sprite = loadTexture("images/tower_yellow.png");
 			break;
 		case TBLUE:
-			t->power = 30;
-			t->range = 80;
-			t->rate = 400; // Toutes les 400ms
-			t->cost = 20;
+			t->power = 25;
+			t->range = 125;
+			t->rate = 500; // Toutes les 500ms
+			t->cost = 75;
 			t->rRange = 43; t->gRange = 117; t->bRange = 140;
 			t->sprite = loadTexture("images/tower_blue.png");
 			break;

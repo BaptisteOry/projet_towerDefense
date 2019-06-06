@@ -54,7 +54,6 @@ int isSquareIntersectsSquare(float x1, float y1, float x2, float y2, int size1, 
 }
 
 int isSquareIntersectsRectangle(float x1, float y1, float x2, float y2, int size1, int size2w, int size2h){
-    printf("%f %f %f %f %d %d %d\n", x1, y1, x2, y2, size1, size2w, size2h);
     if(    x1 + (size2w + size1) >= x2
         && x1 - (size2w + size1) <= x2
         && y1 + (size2h + size1) >= y2

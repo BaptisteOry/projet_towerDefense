@@ -29,21 +29,21 @@ Monster* allocMonster(monsterType type, float x, float y){
 	switch(type){
 		case MSAD :
 			m->healthPoints = 10;
-			m->speed = 10;
+			m->speed = 3;
 			m->r = 255; m->g = 255; m->b = 255;
 			m->sprite = loadTexture("images/monster_sad.png");
 			break;
 		case MANGRY:
 			m->healthPoints = 15;
-			m->speed = 20;
+			m->speed = 5;
 			m->r = 255; m->g = 255; m->b = 255;
 			m->sprite = loadTexture("images/monster_angry.png");
 			break;
 		default:
 			break;
 	}
-	m->sizeBarW = 14; m->sizeBarH = 2;
 	m->healthPointsRatio = m->healthPoints;
+	m->sizeBarW = 14; m->sizeBarH = 2;
 	m->size = 20;
 	m->shape = CIRCLE;
 	m->next = NULL;

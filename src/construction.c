@@ -23,13 +23,13 @@ void giveBonusTowers(Building* b, TowerList* listTowers){
         if(isSquareIntersectsCircle(tempT->x, tempT->y, b->x, b->y, tempT->size, b->range)){
             switch(b->type){
                 case RADAR :
-                    tempT->rangeBonus += 0.25;
+                    tempT->rangeBonus += 0.5;
                     break;
                 case FACTORY:
-                    tempT->powerBonus += 0.25;
+                    tempT->powerBonus += 0.5;
                     break;
                 case STOCK:
-                    tempT->rateBonus += 0.25;
+                    tempT->rateBonus += 0.5;
                     break;
                 default:
                     break;
@@ -45,13 +45,13 @@ void giveBonusTower(Tower* t, BuildingList* listBuildings){
         if(isSquareIntersectsCircle(t->x, t->y, tempB->x, tempB->y, t->size, tempB->range)){
             switch(tempB->type){
                 case RADAR :
-                    t->rangeBonus += 0.25;
+                    t->rangeBonus += 0.5;
                     break;
                 case FACTORY:
-                    t->powerBonus += 0.25;
+                    t->powerBonus += 0.5;
                     break;
                 case STOCK:
-                    t->rateBonus += 0.25;
+                    t->rateBonus += 0.5;
                     break;
                 default:
                     break;
@@ -67,13 +67,13 @@ void removeBonusTowers(Building* b, TowerList* listTowers){
         if(isSquareIntersectsCircle(tempT->x, tempT->y, b->x, b->y, tempT->size, b->range)){
             switch(b->type){
                 case RADAR :
-                    tempT->rangeBonus -= 0.25;
+                    tempT->rangeBonus -= 0.5;
                     break;
                 case FACTORY:
-                    tempT->powerBonus -= 0.25;
+                    tempT->powerBonus -= 0.5;
                     break;
                 case STOCK:
-                    tempT->rateBonus -= 0.25;
+                    tempT->rateBonus -= 0.5;
                     break;
                 default:
                     break;

@@ -71,37 +71,33 @@ int main(int argc, char** argv){
     glLoadIdentity();
     //Initialisation Glut
     glutInit(&argc, argv);
+    // Initialisation random
+    srand(time(NULL));
     // Initialisation des valeurs principales
     static ImageMap imageMap;
     static char imageMap01[255]="images/map01";
+    static ItdEltsInfos* infos = NULL;
+    static char* itdFile = "data/map01.itd";
+    static Node* nodes = NULL;
+    static Link* links = NULL;
     static Game* game;
     static Interface* interface;
     static MonsterList monsters;
     static TowerList towers;
     static BuildingList buildings;
+    static Tower* towerToBuild = NULL;
+    static Tower* towerSelect = NULL; 
+    static Building* buildingToBuild = NULL;
+    static Building* buildingSelect = NULL;
     float x = 0;
     float y = 0;
-    float x2 = 0;
-    float y2 = 0;
-    static Tower* towerToBuild = NULL;
-    Tower* towerSelect = NULL; 
-    Building* buildingToBuild = NULL;
-    Building* buildingSelect = NULL;
     int counter = 0;
-    srand(time(NULL));
 
     // Charger image ppm (placer dans l'image carte)
     loadImageMapPPM(&imageMap, imageMap01);
     // Vérification carte et itd
-    char* itdFile = "data/map01.itd";
-    ItdEltsInfos* infos = NULL;
-    Node* nodes = NULL;
-    Link* links = NULL;
     int nbOfNodes = 0;
-    //printMapData(&imageMap);
     itdCheck(itdFile, &imageMap, &infos, &nodes, &links, &nbOfNodes);
-
-    
     createLinkedNodeList(nodes, links);
 
     // Vérification du ppm
@@ -137,33 +133,26 @@ int main(int argc, char** argv){
             drawTower(towerToBuild);
             drawBuilding(buildingToBuild);
         }
-
-        /* Évènements statut du jeu */
         if(game->status == 0){
             drawBeginning(interface);
-        } else if(game->status == 1){
-            counter += 100;
+        }else if(game->status == 2){
+            drawHelp(interface);
+        }else if(game->status == 3){
+            drawEnd(interface, game);
+        }
+
+        /* Évènements en jeu */
+        if(game->status == 1){
             // Création de vagues de monstres
             addWave(game, &monsters, counter, nodes, GL_VIEW_WIDTH, GL_VIEW_HEIGHT);
             // Destruction monstres
-            killMonsters(&monsters, &towers, counter);
+            killMonsters(game, &monsters, &towers, counter);
             // Déplacement de la vague de monstre;
-            int youDied = moveMonsters(&monsters, nodes, GL_VIEW_WIDTH, GL_VIEW_HEIGHT);
-            if(youDied == 1) {
-                game->status = 3;
-            }
-
-        } else if(game->status == 2){
-            drawHelp(interface);
-        } else if(game->status == 3){
-            freeTowers(&towers);
-            freeBuildings(&buildings);
-            freeMonsters(&monsters);
-            towerToBuild = freeTower(towerToBuild);
-            buildingToBuild = freeBuilding(buildingToBuild);
-            strcpy(interface->infosConstructions, "");
-            counter = 0;
-            drawEnd(interface);
+            (game->lose) = moveMonsters(&monsters, nodes, GL_VIEW_WIDTH, GL_VIEW_HEIGHT);
+            // Fin du jeu
+            endGame(game, &monsters);
+            // Avancer le compteur
+            counter += 100;
         }
 
         // Échange du front et du back buffer : mise à jour de la fenêtre
@@ -193,7 +182,7 @@ int main(int argc, char** argv){
             }
 
             // Évènements joueur selon le statut du jeu
-            if(game->status == 0 || game->status == 3){
+            if(game->status == 0){
                 x = -GL_VIEW_WIDTH + GL_VIEW_WIDTH*2 * (e.button.x) / WINDOW_WIDTH;
                 y = -(-GL_VIEW_HEIGHT + GL_VIEW_HEIGHT*2 * (e.button.y) / WINDOW_HEIGHT);
 
@@ -222,8 +211,6 @@ int main(int argc, char** argv){
 
                     // Clic souris
                     case SDL_MOUSEBUTTONUP:
-                        printf("clic en (%d, %d)\n", e.button.x, e.button.y);
-                        printf("coord (%f, %f)\n", x, y);
                         strcpy(interface->infosConstructions, "");
 
                         // Quitter le jeu avec le bouton
@@ -279,7 +266,6 @@ int main(int argc, char** argv){
                     
                     // Touche clavier enfoncée
                     case SDL_KEYDOWN:
-                        printf("touche pressee (code = %d)\n", e.key.keysym.sym);
                         // Sélection des tours
                         if(e.key.keysym.sym == SDLK_a){
                             towerToBuild = allocTower(TRED, x, y);
@@ -338,6 +324,23 @@ int main(int argc, char** argv){
                     (game->status) = 1;
                 }
 
+            } else if (game->status == 3) {
+                x = -GL_VIEW_WIDTH + GL_VIEW_WIDTH*2 * (e.button.x) / WINDOW_WIDTH;
+                y = -(-GL_VIEW_HEIGHT + GL_VIEW_HEIGHT*2 * (e.button.y) / WINDOW_HEIGHT);
+
+                if(e.type == SDL_MOUSEBUTTONUP 
+                    && menuBSelected(interface, x, y)){
+                    strcpy(interface->infosConstructions, "");
+                    counter = 0;
+                    freeTowers(&towers);
+                    freeBuildings(&buildings);
+                    freeMonsters(&monsters);
+                    towerToBuild = freeTower(towerToBuild);
+                    buildingToBuild = freeBuilding(buildingToBuild);
+                    freeGame(game);
+                    game = allocGame();
+                    game->status = 1;
+                }
             }
 
         }
@@ -360,8 +363,8 @@ int main(int argc, char** argv){
     freeTowers(&towers);
     freeBuildings(&buildings);
     freeMonsters(&monsters);
-    towerToBuild = freeTower(towerToBuild);
-    buildingToBuild = freeBuilding(buildingToBuild);
+    freeTower(towerToBuild);
+    freeBuilding(buildingToBuild);
     
     return EXIT_SUCCESS;
 }

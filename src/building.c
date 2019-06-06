@@ -40,7 +40,7 @@ Building* allocBuilding(buildingType type, float x, float y){
 	b->range= 100;
 	switch(type){
 		case RADAR :
-			b->cost = 100;
+			b->cost = 50;
 			b->rRange = 255; b->gRange = 236; b->bRange = 180;
 			b->sprite = loadTexture("images/building_radar.png");
 			break;
@@ -50,7 +50,7 @@ Building* allocBuilding(buildingType type, float x, float y){
 			b->sprite = loadTexture("images/building_factory.png");
 			break;
 		case STOCK:
-			b->cost = 25;
+			b->cost = 50;
 			b->rRange = 229; b->gRange = 119; b->bRange = 1;
 			b->sprite = loadTexture("images/building_stock.png");
 			break;

@@ -22,13 +22,15 @@ Game* allocGame(){
         fprintf(stderr, "MEMORY ERROR\n");
         exit(1);
     }
-    g->money = 500;
+    g->money = 100;
 
     g->nbWave = 0;
+    g->lastWave = 10;
     g->nbMonstersPerWave = 10;
-    g->timeWave = 10000; // 10s entre chaque vague
-    g->timeAddWave = 500; // 500ms entre les apparitions de monstre
+    g->timeWave = 20000; // 20s entre chaque vague
+    g->timeAddWave = 1000; // 1s entre les apparitions de monstre
 
+    g->lose = 0;
     g->status = 0;
 
     return g;
@@ -41,21 +43,24 @@ void freeGame(Game* g){
 }
 
 void addWave(Game* g, MonsterList* list, int counter, Node* nodes, float GL_VIEW_WIDTH, float GL_VIEW_HEIGHT){
-    if((counter%(g->timeWave) < (g->nbMonstersPerWave)*(g->timeAddWave)) && ((counter%(g->timeWave))%(g->timeAddWave) == 0) && (counter > 10000)){
-        if(counter%(g->timeWave) == 0){
+    if(counter >= 0){
+        if(counter%(g->timeWave) == 0 && (g->nbWave) < (g->lastWave)){
             (g->nbWave) += 1;
         }
-        Monster* tempM;
-        tempM = allocMonster(randomRange(0, MNUMBER-1), -245, -75);
-        initializeMonsterPath(tempM, nodes);
-        initializeMonsterPosition(tempM, GL_VIEW_WIDTH, GL_VIEW_HEIGHT);
-        tempM->loot *= 1+(g->nbWave-1)*0.25;
-        tempM->healthPoints *= 1+(g->nbWave-1)*0.25;
-        addMonster(tempM, list);
+        if((counter%(g->timeWave) < (g->nbMonstersPerWave)*(g->timeAddWave)) && ((counter%(g->timeWave))%(g->timeAddWave) == 0) && counter < (g->timeWave)*(g->lastWave)){
+            Monster* tempM;
+            tempM = allocMonster(randomRange(0, MNUMBER-1), -245, -75);
+            initializeMonsterPath(tempM, nodes);
+            initializeMonsterPosition(tempM, GL_VIEW_WIDTH, GL_VIEW_HEIGHT);
+            tempM->loot *= 1+(g->nbWave-1)*0.5;
+            tempM->healthPoints *= 1+(g->nbWave-1)*1.5;
+            tempM->healthPointsRatio = tempM->healthPoints;
+            addMonster(tempM, list);
+        }
     }
 }
 
-void killMonsters(MonsterList* listMonsters, TowerList* listTowers, int counter){
+void killMonsters(Game* g, MonsterList* listMonsters, TowerList* listTowers, int counter){
     if(*listMonsters != NULL && *listTowers != NULL){
         Monster *tempM = *listMonsters;
         Monster *toDelete;
@@ -64,7 +69,7 @@ void killMonsters(MonsterList* listMonsters, TowerList* listTowers, int counter)
             while(tempT != NULL){ // Test pour chaque tour
                 if(isCircleIntersectsCircle(tempT->x, tempT->y, tempM->x, tempM->y, (tempT->range*tempT->rangeBonus), tempM->size)){ // Test portée de la tour
                     if(counter%(int)(tempT->rate)/(tempT->rateBonus) == 0){ // Test cadence de la tour
-                        tempM->healthPoints -= (tempT->power*tempT->powerBonus)/20; // Test puissance de la tour
+                        tempM->healthPoints -= (tempT->power*tempT->powerBonus)/10; // Test puissance de la tour
                         if((tempM->healthPoints) <= 0){
                             toDelete = tempM;
                         }
@@ -75,9 +80,16 @@ void killMonsters(MonsterList* listMonsters, TowerList* listTowers, int counter)
             tempM = tempM->next;
             // Kill monster
             if(toDelete != NULL){
+                g->money += toDelete->loot;
                 deleteMonster(toDelete, listMonsters);
                 toDelete = NULL;
             }
         }
+    }
+}
+
+void endGame(Game* g, MonsterList* list){
+    if((g->nbWave == g->lastWave && *list == NULL) || (g->lose == 1)){
+        g->status = 3;
     }
 }
