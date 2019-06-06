@@ -116,7 +116,7 @@ void drawGameElements(Interface* f, Game* g){
             glScalef(f->wInfosGame, f->hInfosGame, 0);
             drawSquare(f->r, f->g, f->b, f->a);
         glPopMatrix();
-        sprintf(bufferText, "Argent : %d\nVague : %d/%d\n>Touche \"H\" pour l'aide", g->money, g->nbWave, g->lastWave);
+        sprintf(bufferText, "Argent : %d\nVague : %d/10\n>Touche \"H\" pour l'aide", g->money, g->nbWave);
         displayText(f->font, (unsigned char*)bufferText, -(f->wInfosGame)+(f->xText), (f->hInfosGame)+(f->yText), 255, 255, 255);
     glPopMatrix();
 }
@@ -139,18 +139,14 @@ void drawHelp(Interface* f){
     glPopMatrix();
 }
 
-void drawEnd(Interface* f, Game* g){
+void drawEnd(Interface* f){
     char bufferText[255] = "";
     glPushMatrix();
         glPushMatrix();
             glScalef(f->wFull, f->hFull, 0);
             drawSquare(f->r, f->g, f->b, 255);
         glPopMatrix();
-        if(g->lose == 1){
-            sprintf(bufferText, "Vous n'avez pas sauve le monde des emotions negatives.\nReessayez enncore une fois !");
-        } else {
-            sprintf(bufferText, "Bravo ! Vous avez gagne !");
-        }
+        sprintf(bufferText, "C'est la fin.");
         displayText(f->font, (unsigned char*)bufferText, f->xMenu, f->yMenu, 255, 255, 255);
     glPopMatrix();
     // Bouton jouer
@@ -161,7 +157,7 @@ void drawEnd(Interface* f, Game* g){
             drawSquare(f->r2, f->g2, f->b2, 255);
         glPopMatrix();
         sprintf(bufferText, "Recommencer");
-        displayText(f->font, (unsigned char*)bufferText, -24, -2, f->r, f->g, f->b);
+        displayText(f->font, (unsigned char*)bufferText, -23, -2, f->r, f->g, f->b);
     glPopMatrix();
     // Logo
     glPushMatrix();

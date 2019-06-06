@@ -83,7 +83,7 @@ int main(int argc, char** argv){
     float y = 0;
     float x2 = 0;
     float y2 = 0;
-    Tower* towerToBuild = NULL;
+    static Tower* towerToBuild = NULL;
     Tower* towerSelect = NULL; 
     Building* buildingToBuild = NULL;
     Building* buildingSelect = NULL;
@@ -137,26 +137,33 @@ int main(int argc, char** argv){
             drawTower(towerToBuild);
             drawBuilding(buildingToBuild);
         }
+
+        /* Évènements statut du jeu */
         if(game->status == 0){
             drawBeginning(interface);
-        }else if(game->status == 2){
-            drawHelp(interface);
-        }else if(game->status == 3){
-            drawEnd(interface, game);
-        }
-
-        /* Évènements en jeu */
-        if(game->status == 1){
+        } else if(game->status == 1){
+            counter += 100;
             // Création de vagues de monstres
             addWave(game, &monsters, counter, nodes, GL_VIEW_WIDTH, GL_VIEW_HEIGHT);
             // Destruction monstres
             killMonsters(&monsters, &towers, counter);
             // Déplacement de la vague de monstre;
-            (game->lose) = moveMonsters(&monsters, nodes, GL_VIEW_WIDTH, GL_VIEW_HEIGHT);
-            // Fin du jeu
-            endGame(game, &monsters);
-            // Avancer le compteur
-            counter += 100;
+            int youDied = moveMonsters(&monsters, nodes, GL_VIEW_WIDTH, GL_VIEW_HEIGHT);
+            if(youDied == 1) {
+                game->status = 3;
+            }
+
+        } else if(game->status == 2){
+            drawHelp(interface);
+        } else if(game->status == 3){
+            freeTowers(&towers);
+            freeBuildings(&buildings);
+            freeMonsters(&monsters);
+            towerToBuild = freeTower(towerToBuild);
+            buildingToBuild = freeBuilding(buildingToBuild);
+            strcpy(interface->infosConstructions, "");
+            counter = 0;
+            drawEnd(interface);
         }
 
         // Échange du front et du back buffer : mise à jour de la fenêtre
@@ -192,13 +199,6 @@ int main(int argc, char** argv){
 
                 if(e.type == SDL_MOUSEBUTTONUP 
                     && menuBSelected(interface, x, y)){
-                    freeTowers(&towers);
-                    freeBuildings(&buildings);
-                    freeMonsters(&monsters);
-                    towerToBuild = freeTower(towerToBuild);
-                    buildingToBuild = freeBuilding(buildingToBuild);
-                    strcpy(interface->infosConstructions, "");
-                    counter = 0;
                     game->status = 1;
                 }
 
@@ -294,7 +294,7 @@ int main(int argc, char** argv){
                             towerToBuild = allocTower(TBLUE, x, y);
                         }
                         if(e.key.keysym.sym == SDLK_a || e.key.keysym.sym == SDLK_z || e.key.keysym.sym == SDLK_e || e.key.keysym.sym == SDLK_r) {
-                            towerConstructible(towerToBuild, buildings, towers, nodes, game, x2, y2, WINDOW_WIDTH, WINDOW_HEIGHT);
+                            towerConstructible(towerToBuild, buildings, towers, nodes, game, x, y, GL_VIEW_WIDTH, GL_VIEW_HEIGHT);
                         }
                         // Sélection des bâtiments
                         if(e.key.keysym.sym == SDLK_q){
@@ -307,7 +307,7 @@ int main(int argc, char** argv){
                             buildingToBuild = allocBuilding(STOCK, x, y);
                         }
                         if(e.key.keysym.sym == SDLK_q || e.key.keysym.sym == SDLK_s || e.key.keysym.sym == SDLK_d) {
-                            buildingConstructible(buildingToBuild, buildings, towers, nodes, game, x2, y2, WINDOW_WIDTH, WINDOW_HEIGHT);
+                            buildingConstructible(buildingToBuild, buildings, towers, nodes, game, x, y, GL_VIEW_WIDTH, GL_VIEW_HEIGHT);
                         }
                         // Aide
                         if(e.key.keysym.sym == SDLK_h){
