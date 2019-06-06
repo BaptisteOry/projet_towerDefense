@@ -83,9 +83,9 @@ void loadImageMapPPM(ImageMap* imageMap, char *fileName){
     }
   }
 
-  for (int i=0; i<width*height*3; i++){
+  /*for (int i=0; i<width*height*3; i++){
     printf("%hhu\n", imageMap->data[i]);
-  }
+  }*/
 
   // Fermer fichier
   fclose(myFile);

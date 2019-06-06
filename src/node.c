@@ -12,10 +12,12 @@
 #include "../include/imageMap.h"
 #include "../include/node.h"
 
-int doesCircleIntersectsPath(float x, float y, int size, Node* nodes, unsigned int WINDOW_WIDTH, unsigned int WINDOW_HEIGHT) {
+int doesCircleIntersectsPath(float x, float y, int size, Node* nodes, float GL_VIEW_WIDTH, float GL_VIEW_HEIGHT) {
     Node* temp = nodes;
-    float X = 10*x/WINDOW_WIDTH-0.5;
-    float Y = 6*y/WINDOW_HEIGHT-0.5;
+    //float X = 10*x/WINDOW_WIDTH-0.5;
+    //float Y = 6*y/WINDOW_HEIGHT-0.5;
+    float X = 10*(x+GL_VIEW_WIDTH)/(2*GL_VIEW_WIDTH)-0.5;
+	float Y = 6*(-y+GL_VIEW_HEIGHT)/(2*GL_VIEW_HEIGHT)-0.5;
     while(temp != NULL) {
         if(X>temp->x-1 && X<temp->x+1) {
             if(Y>temp->y-1 && Y<temp->y+1) {

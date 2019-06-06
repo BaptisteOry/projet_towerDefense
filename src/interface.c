@@ -139,14 +139,18 @@ void drawHelp(Interface* f){
     glPopMatrix();
 }
 
-void drawEnd(Interface* f){
+void drawEnd(Interface* f, Game* g){
     char bufferText[255] = "";
     glPushMatrix();
         glPushMatrix();
             glScalef(f->wFull, f->hFull, 0);
             drawSquare(f->r, f->g, f->b, 255);
         glPopMatrix();
-        sprintf(bufferText, "C'est la fin.");
+        if(g->lose == 1){
+            sprintf(bufferText, "Vous n'avez pas sauve le monde des emotions negatives.\nReessayez enncore une fois !");
+        } else {
+            sprintf(bufferText, "Bravo ! Vous avez gagne !");
+        }
         displayText(f->font, (unsigned char*)bufferText, f->xMenu, f->yMenu, 255, 255, 255);
     glPopMatrix();
     // Bouton jouer
@@ -157,7 +161,7 @@ void drawEnd(Interface* f){
             drawSquare(f->r2, f->g2, f->b2, 255);
         glPopMatrix();
         sprintf(bufferText, "Recommencer");
-        displayText(f->font, (unsigned char*)bufferText, -23, -2, f->r, f->g, f->b);
+        displayText(f->font, (unsigned char*)bufferText, -24, -2, f->r, f->g, f->b);
     glPopMatrix();
     // Logo
     glPushMatrix();

@@ -30,6 +30,7 @@ Game* allocGame(){
     g->timeWave = 10000; // 10s entre chaque vague
     g->timeAddWave = 500; // 500ms entre les apparitions de monstre
 
+    g->lose = 0;
     g->status = 0;
 
     return g;
@@ -47,7 +48,6 @@ void addWave(Game* g, MonsterList* list, int counter, Node* nodes, float GL_VIEW
             (g->nbWave) += 1;
         }
         if((counter%(g->timeWave) < (g->nbMonstersPerWave)*(g->timeAddWave)) && ((counter%(g->timeWave))%(g->timeAddWave) == 0) && counter < (g->timeWave)*(g->lastWave)){
-            printf("%d\n", counter);
             Monster* tempM;
             tempM = allocMonster(randomRange(0, MNUMBER-1), -245, -75);
             initializeMonsterPath(tempM, nodes);
@@ -88,7 +88,7 @@ void killMonsters(MonsterList* listMonsters, TowerList* listTowers, int counter)
 }
 
 void endGame(Game* g, MonsterList* list){
-    if(g->nbWave == g->lastWave && *list == NULL){
-        printf("%s\n", "This is the end !");
+    if((g->nbWave == g->lastWave && *list == NULL) || (g->lose == 1)){
+        g->status = 3;
     }
 }

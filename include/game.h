@@ -10,6 +10,7 @@ typedef struct Game{
 	int timeWave ; // Temps entre chaque vague
     int timeAddWave; // Temps d'apparition des monstres pour une vague
 
+    int lose;
 	int status; // 0->begin,1->play,2->pause,3->end
 }Game;
 

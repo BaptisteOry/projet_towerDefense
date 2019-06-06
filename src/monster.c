@@ -233,13 +233,22 @@ void initializeMonsterPosition(Monster* m, float GL_VIEW_WIDTH, float GL_VIEW_HE
 	m->direction = directionAB(m->path, m->path->nextNode);
 }
 
-void moveMonsters(MonsterList* monsters, Node* nodes, float GL_VIEW_WIDTH, float GL_VIEW_HEIGHT) {
+int moveMonsters(MonsterList* monsters, Node* nodes, float GL_VIEW_WIDTH, float GL_VIEW_HEIGHT) {
 	Monster* temp = *monsters;
+	int youDied = 0;
 	while(temp != NULL) {
-		Monster* toDelete = moveMonsterAB(temp, nodes, GL_VIEW_WIDTH, GL_VIEW_HEIGHT);
+		Monster* toDelete = NULL;
+		toDelete = moveMonsterAB(temp, nodes, GL_VIEW_WIDTH, GL_VIEW_HEIGHT);
+		if(toDelete != NULL) {
+			youDied = 1;
+		}
 		deleteMonster(toDelete, monsters);
 		temp = temp->next;
 	}
+	if(youDied == 1) {
+		return 1;
+	}
+	return 0;
 }
 
 int passNodeCenter(Monster* m, Node* n, float GL_VIEW_WIDTH, float GL_VIEW_HEIGHT) {

@@ -83,7 +83,7 @@ int main(int argc, char** argv){
     float y = 0;
     float x2 = 0;
     float y2 = 0;
-    static Tower* towerToBuild = NULL;
+    Tower* towerToBuild = NULL;
     Tower* towerSelect = NULL; 
     Building* buildingToBuild = NULL;
     Building* buildingSelect = NULL;
@@ -104,15 +104,8 @@ int main(int argc, char** argv){
     
     createLinkedNodeList(nodes, links);
 
-    printf("test liens\n");
-    testlinks(nodes);
-
     // Vérification du ppm
     mapCheck(&imageMap, infos, nodes);
-
-    // Affiche les informations enregistrées (à titre de test)
-    printf("Test test\n");
-    //testLectureItd(infos, nodes, links);
 
     // Créer un nouveau jeu et l'interface
     interface = allocInterface(GL_VIEW_WIDTH, GL_VIEW_HEIGHT);
@@ -144,31 +137,26 @@ int main(int argc, char** argv){
             drawTower(towerToBuild);
             drawBuilding(buildingToBuild);
         }
-
-        /* Évènements statut du jeu */
         if(game->status == 0){
             drawBeginning(interface);
-        } else if(game->status == 1){
+        }else if(game->status == 2){
+            drawHelp(interface);
+        }else if(game->status == 3){
+            drawEnd(interface, game);
+        }
+
+        /* Évènements en jeu */
+        if(game->status == 1){
             // Création de vagues de monstres
             addWave(game, &monsters, counter, nodes, GL_VIEW_WIDTH, GL_VIEW_HEIGHT);
             // Destruction monstres
             killMonsters(&monsters, &towers, counter);
             // Déplacement de la vague de monstre;
-            moveMonsters(&monsters, nodes, GL_VIEW_WIDTH, GL_VIEW_HEIGHT);
+            (game->lose) = moveMonsters(&monsters, nodes, GL_VIEW_WIDTH, GL_VIEW_HEIGHT);
             // Fin du jeu
             endGame(game, &monsters);
+            // Avancer le compteur
             counter += 100;
-        } else if(game->status == 2){
-            drawHelp(interface);
-        } else if(game->status == 3){
-            freeTowers(&towers);
-            freeBuildings(&buildings);
-            freeMonsters(&monsters);
-            towerToBuild = freeTower(towerToBuild);
-            buildingToBuild = freeBuilding(buildingToBuild);
-            strcpy(interface->infosConstructions, "");
-            counter = 0;
-            drawEnd(interface);
         }
 
         // Échange du front et du back buffer : mise à jour de la fenêtre
@@ -204,6 +192,13 @@ int main(int argc, char** argv){
 
                 if(e.type == SDL_MOUSEBUTTONUP 
                     && menuBSelected(interface, x, y)){
+                    freeTowers(&towers);
+                    freeBuildings(&buildings);
+                    freeMonsters(&monsters);
+                    towerToBuild = freeTower(towerToBuild);
+                    buildingToBuild = freeBuilding(buildingToBuild);
+                    strcpy(interface->infosConstructions, "");
+                    counter = 0;
                     game->status = 1;
                 }
 
@@ -216,15 +211,12 @@ int main(int argc, char** argv){
                         x = -GL_VIEW_WIDTH + GL_VIEW_WIDTH*2 * (e.button.x) / WINDOW_WIDTH;
                         y = -(-GL_VIEW_HEIGHT + GL_VIEW_HEIGHT*2 * (e.button.y) / WINDOW_HEIGHT);
 
-                        x2 = e.button.x;
-                        y2 = e.button.y;
-
                         if(towerToBuild != NULL){
                             towerToBuild->x = x; towerToBuild->y = y;
-                            towerConstructible(towerToBuild, buildings, towers, nodes, game, e.button.x, e.button.y, WINDOW_WIDTH, WINDOW_HEIGHT);
+                            towerConstructible(towerToBuild, buildings, towers, nodes, game, x, y, GL_VIEW_WIDTH, GL_VIEW_HEIGHT);
                         }else if(buildingToBuild != NULL){
                             buildingToBuild->x = x; buildingToBuild->y = y;
-                            buildingConstructible(buildingToBuild, buildings, towers, nodes, game, e.button.x, e.button.y, WINDOW_WIDTH, WINDOW_HEIGHT);
+                            buildingConstructible(buildingToBuild, buildings, towers, nodes, game, x, y, GL_VIEW_WIDTH, GL_VIEW_HEIGHT);
                         }
                         break;
 
