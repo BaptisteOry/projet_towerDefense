@@ -28,9 +28,9 @@ Interface* allocInterface(float GL_VIEW_WIDTH, float GL_VIEW_HEIGHT){
     i->xLogo2 = GL_VIEW_WIDTH-(i->wLogo2)-5; i->yLogo2 = -GL_VIEW_HEIGHT+(i->hLogo2)+5;
     i->spriteLogo = loadTexture("images/title.png");
 
-    i->xBegin = -175; i->yBegin = 20;
-    i->wBeginB = 45; i->hBeginB = 10;
-    i->xBeginB = 0; i->yBeginB = -20;
+    i->xMenu = -175; i->yMenu = 20;
+    i->wMenuB = 45; i->hMenuB = 10;
+    i->xMenuB = 0; i->yMenuB = -20;
 
     i->wInfosGame = 58; i->hInfosGame = 16;
     i->xInfosGame = -GL_VIEW_WIDTH+(i->wInfosGame)+5; i->yInfosGame = GL_VIEW_HEIGHT-(i->hInfosGame)-40;
@@ -71,13 +71,13 @@ void drawBeginning(Interface* f){
             drawSquare(f->r, f->g, f->b, 255);
         glPopMatrix();
         sprintf(bufferText, "Bienvenue sur Flower Tower !\nVous vous appretez a combattre les emotions negatives grace aux fleurs.");
-        displayText(f->font, (unsigned char*)bufferText, f->xBegin, f->yBegin, 255, 255, 255);
+        displayText(f->font, (unsigned char*)bufferText, f->xMenu, f->yMenu, 255, 255, 255);
     glPopMatrix();
     // Bouton jouer
     glPushMatrix();
-        glTranslatef(f->xBeginB, f->yBeginB, 0);
+        glTranslatef(f->xMenuB, f->yMenuB, 0);
         glPushMatrix();
-            glScalef(f->wBeginB, f->hBeginB, 0);
+            glScalef(f->wMenuB, f->hMenuB, 0);
             drawSquare(f->r2, f->g2, f->b2, 255);
         glPopMatrix();
         sprintf(bufferText, "Jouer");
@@ -144,10 +144,26 @@ void drawEnd(Interface* f){
     glPushMatrix();
         glPushMatrix();
             glScalef(f->wFull, f->hFull, 0);
-            drawSquare(f->r, f->g, f->b, f->a);
+            drawSquare(f->r, f->g, f->b, 255);
         glPopMatrix();
-        sprintf(bufferText, "C'est la fin !");
-        displayText(f->font, (unsigned char*)bufferText, 0, 0, 255, 255, 255);
+        sprintf(bufferText, "C'est la fin.");
+        displayText(f->font, (unsigned char*)bufferText, f->xMenu, f->yMenu, 255, 255, 255);
+    glPopMatrix();
+    // Bouton jouer
+    glPushMatrix();
+        glTranslatef(f->xMenuB, f->yMenuB, 0);
+        glPushMatrix();
+            glScalef(f->wMenuB, f->hMenuB, 0);
+            drawSquare(f->r2, f->g2, f->b2, 255);
+        glPopMatrix();
+        sprintf(bufferText, "Recommencer");
+        displayText(f->font, (unsigned char*)bufferText, -23, -2, f->r, f->g, f->b);
+    glPopMatrix();
+    // Logo
+    glPushMatrix();
+        glTranslatef(f->xLogo2, f->yLogo2, 0);
+        glScalef(f->wLogo2, f->hLogo2, 0);
+        drawPicture(f->spriteLogo, 255, 255, 255, 255);
     glPopMatrix();
 }
 
@@ -164,8 +180,8 @@ void drawInfosConstructions(Interface* f){
     }
 }
 
-int beginSelected(Interface* f, float x, float y){
-    if(isSquareIntersectsRectangle(x, y, f->xBeginB, f->yBeginB, 0, f->wBeginB, f->hBeginB)){
+int menuBSelected(Interface* f, float x, float y){
+    if(isSquareIntersectsRectangle(x, y, f->xMenuB, f->yMenuB, 0, f->wMenuB, f->hMenuB)){
         return 1;
     }
     return 0;

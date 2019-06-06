@@ -27,7 +27,7 @@ typedef struct Building {
 const char* getBuildingTypeName(buildingType bt);
 Building* allocBuilding(buildingType type, float x, float y);
 void addBuilding(Building* b, BuildingList* list);
-void freeBuilding(Building* b);
+Building* freeBuilding(Building* b);
 void freeBuildings(BuildingList* list);
 void deleteBuilding(Building* b, BuildingList* list);
 void drawBuildings(BuildingList list);

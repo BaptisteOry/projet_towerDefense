@@ -78,13 +78,14 @@ void addBuilding(Building* b, BuildingList* list){
     }
 }
 
-void freeBuilding(Building* b){
+Building* freeBuilding(Building* b){
 	if(b != NULL){
 		if(b->sprite){
       		glDeleteTextures(1, &(b->sprite));
     	}
         free(b);
     }
+    return NULL;
 }
 
 void freeBuildings(BuildingList* list){
@@ -134,11 +135,13 @@ void drawBuildings(BuildingList list){
 }
 
 void drawBuilding(Building* b){
-    glPushMatrix();
-		glTranslatef(b->x, b->y, 0);
-		glScalef(b->size, b->size, 0);
-		drawPicture(b->sprite, b->r, b->g, b->b, b->a);
-	glPopMatrix();
+	if(b != NULL){
+	    glPushMatrix();
+			glTranslatef(b->x, b->y, 0);
+			glScalef(b->size, b->size, 0);
+			drawPicture(b->sprite, b->r, b->g, b->b, b->a);
+		glPopMatrix();
+	}	
 }
 
 void drawRangeBuildings(BuildingList list){

@@ -99,13 +99,14 @@ void addTower(Tower* t, TowerList* list){
     }
 }
 
-void freeTower(Tower* t){
+Tower* freeTower(Tower* t){
 	if(t != NULL){
 		if(t->sprite){
       		glDeleteTextures(1, &(t->sprite));
     	}
     	free(t);
     }
+    return NULL;
 }
 
 void freeTowers(TowerList* list){
@@ -155,11 +156,13 @@ void drawTowers(TowerList list){
 }
 
 void drawTower(Tower* t){
-    glPushMatrix();
-		glTranslatef(t->x, t->y, 0);
-		glScalef(t->size, t->size, 0);
-		drawPicture(t->sprite, t->r, t->g, t->b, t->a);
-	glPopMatrix();
+	if(t != NULL){
+	    glPushMatrix();
+			glTranslatef(t->x, t->y, 0);
+			glScalef(t->size, t->size, 0);
+			drawPicture(t->sprite, t->r, t->g, t->b, t->a);
+		glPopMatrix();
+	}
 }
 
 void drawRangeTowers(TowerList list){

@@ -31,7 +31,7 @@ typedef struct Tower {
 const char* getTowerTypeName(towerType tt);
 Tower* allocTower(towerType type, float x, float y);
 void addTower(Tower* t, TowerList* list);
-void freeTower(Tower* t);
+Tower* freeTower(Tower* t);
 void freeTowers(TowerList* list);
 void deleteTower(Tower* t, TowerList* list);
 void drawTower(Tower* t);

@@ -83,7 +83,7 @@ int main(int argc, char** argv){
     float y = 0;
     float x2 = 0;
     float y2 = 0;
-    Tower* towerToBuild = NULL;
+    static Tower* towerToBuild = NULL;
     Tower* towerSelect = NULL; 
     Building* buildingToBuild = NULL;
     Building* buildingSelect = NULL;
@@ -129,19 +129,18 @@ int main(int argc, char** argv){
         glClearColor(0.1, 0.1, 0.1, 1);
         // Désactivage du double buffering
         SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 0);
-        
+
         /* Dessin des éléments */
-        drawImageMap(&imageMap, GL_VIEW_WIDTH, GL_VIEW_HEIGHT);
-        drawMonsters(monsters);
-        drawRangeTowers(towers);
-        drawRangeBuildings(buildings);
-        drawTowers(towers);
-        drawBuildings(buildings);
-        drawInfosConstructions(interface);
-        drawGameElements(interface, game);
-        if(towerToBuild != NULL){
+        if(game->status == 1 || game->status == 2){
+            drawImageMap(&imageMap, GL_VIEW_WIDTH, GL_VIEW_HEIGHT);
+            drawMonsters(monsters);
+            drawRangeTowers(towers);
+            drawRangeBuildings(buildings);
+            drawTowers(towers);
+            drawBuildings(buildings);
+            drawInfosConstructions(interface);
+            drawGameElements(interface, game);
             drawTower(towerToBuild);
-        }else if (buildingToBuild != NULL){
             drawBuilding(buildingToBuild);
         }
 
@@ -157,6 +156,13 @@ int main(int argc, char** argv){
         } else if(game->status == 2){
             drawHelp(interface);
         } else if(game->status == 3){
+            freeTowers(&towers);
+            freeBuildings(&buildings);
+            freeMonsters(&monsters);
+            towerToBuild = freeTower(towerToBuild);
+            buildingToBuild = freeBuilding(buildingToBuild);
+            strcpy(interface->infosConstructions, "");
+            counter = 0;
             drawEnd(interface);
         }
 
@@ -187,12 +193,12 @@ int main(int argc, char** argv){
             }
 
             // Évènements joueur selon le statut du jeu
-            if(game->status == 0){
+            if(game->status == 0 || game->status == 3){
                 x = -GL_VIEW_WIDTH + GL_VIEW_WIDTH*2 * (e.button.x) / WINDOW_WIDTH;
                 y = -(-GL_VIEW_HEIGHT + GL_VIEW_HEIGHT*2 * (e.button.y) / WINDOW_HEIGHT);
 
                 if(e.type == SDL_MOUSEBUTTONUP 
-                    && beginSelected(interface, x, y)){
+                    && menuBSelected(interface, x, y)){
                     game->status = 1;
                 }
 
@@ -316,13 +322,11 @@ int main(int argc, char** argv){
                     case SDL_KEYUP:
                         // Désélection des tours
                         if(e.key.keysym.sym == SDLK_a || e.key.keysym.sym == SDLK_z || e.key.keysym.sym == SDLK_e || e.key.keysym.sym == SDLK_r) {
-                            freeTower(towerToBuild);
-                            towerToBuild = NULL;
+                            towerToBuild = freeTower(towerToBuild);
                         }
                         // Désélection des bâtiments
                         if(e.key.keysym.sym == SDLK_q || e.key.keysym.sym == SDLK_s || e.key.keysym.sym == SDLK_d) {
-                            freeBuilding(buildingToBuild);
-                            buildingToBuild = NULL;
+                            buildingToBuild = freeBuilding(buildingToBuild);
                         }
                         
                     default:
@@ -359,6 +363,8 @@ int main(int argc, char** argv){
     freeTowers(&towers);
     freeBuildings(&buildings);
     freeMonsters(&monsters);
+    towerToBuild = freeTower(towerToBuild);
+    buildingToBuild = freeBuilding(buildingToBuild);
     
     return EXIT_SUCCESS;
 }

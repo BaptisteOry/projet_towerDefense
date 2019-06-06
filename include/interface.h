@@ -8,9 +8,9 @@ typedef struct Interface{
 	int xLogo2, yLogo2;
 	GLuint spriteLogo; // Sprite Logo
 
-	int xBegin, yBegin;
-	int wBeginB, hBeginB;
-	int xBeginB, yBeginB;
+	int xMenu, yMenu;
+	int wMenuB, hMenuB;
+	int xMenuB, yMenuB;
 
 	int wInfosGame, hInfosGame;
 	int xInfosGame, yInfosGame;
@@ -38,7 +38,7 @@ void drawGameElements(Interface* f, Game* g);
 void drawHelp(Interface* f);
 void drawEnd(Interface* f);
 void drawInfosConstructions(Interface* f);
-int beginSelected(Interface* f, float x, float y);
+int menuBSelected(Interface* f, float x, float y);
 int quitSelected(Interface* f, float x, float y);
 
 #endif
