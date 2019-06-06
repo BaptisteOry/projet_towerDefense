@@ -104,15 +104,8 @@ int main(int argc, char** argv){
     
     createLinkedNodeList(nodes, links);
 
-    printf("test liens\n");
-    testlinks(nodes);
-
     // Vérification du ppm
     mapCheck(&imageMap, infos, nodes);
-
-    // Affiche les informations enregistrées (à titre de test)
-    printf("Test test\n");
-    //testLectureItd(infos, nodes, links);
 
     // Créer un nouveau jeu et l'interface
     interface = allocInterface(GL_VIEW_WIDTH, GL_VIEW_HEIGHT);
@@ -219,10 +212,10 @@ int main(int argc, char** argv){
 
                         if(towerToBuild != NULL){
                             towerToBuild->x = x; towerToBuild->y = y;
-                            towerConstructible(towerToBuild, buildings, towers, nodes, game, e.button.x, e.button.y, WINDOW_WIDTH, WINDOW_HEIGHT);
+                            towerConstructible(towerToBuild, buildings, towers, nodes, game, x, y, GL_VIEW_WIDTH, GL_VIEW_HEIGHT);
                         }else if(buildingToBuild != NULL){
                             buildingToBuild->x = x; buildingToBuild->y = y;
-                            buildingConstructible(buildingToBuild, buildings, towers, nodes, game, e.button.x, e.button.y, WINDOW_WIDTH, WINDOW_HEIGHT);
+                            buildingConstructible(buildingToBuild, buildings, towers, nodes, game, x, y, GL_VIEW_WIDTH, GL_VIEW_HEIGHT);
                         }
                         break;
 

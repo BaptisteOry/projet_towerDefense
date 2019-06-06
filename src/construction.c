@@ -15,6 +15,7 @@
 #include "../include/tower.h"
 #include "../include/game.h"
 #include "../include/construction.h"
+#include "../include/node.h"
 
 void giveBonusTowers(Building* b, TowerList* listTowers){
 	Tower *tempT = *listTowers;
@@ -114,24 +115,22 @@ int constructionIntersection(BuildingList listBuildings, TowerList listTowers, f
     }
 }
 
-void towerConstructible(Tower* towerToBuild, BuildingList buildings, TowerList towers, Node* nodes, Game* game, int x, int y, unsigned int WINDOW_WIDTH, unsigned int WINDOW_HEIGHT){
+void towerConstructible(Tower* towerToBuild, BuildingList buildings, TowerList towers, Node* nodes, Game* game, int x, int y, float GL_VIEW_WIDTH, float GL_VIEW_HEIGHT){
     if(!(constructionIntersection(buildings, towers, towerToBuild->x, towerToBuild->y, towerToBuild->size, towerToBuild->shape)) 
        && (towerToBuild->cost <= game->money)
-       && !(doesCircleIntersectsPath(x, y, towerToBuild->size, nodes, WINDOW_WIDTH, WINDOW_HEIGHT))){
-        printf("%s\n", "oui");
+       && !(doesCircleIntersectsPath(x, y, towerToBuild->size, nodes, GL_VIEW_WIDTH, GL_VIEW_HEIGHT))){
         towerToBuild->r = 255; towerToBuild->g = 255; towerToBuild->b = 255; towerToBuild->a = 255;
         towerToBuild->constructible = 1;
     }else{
-        printf("%s\n", "non");
         towerToBuild->r = 255; towerToBuild->g = 0; towerToBuild->b = 0; towerToBuild->a = 150;
         towerToBuild->constructible = 0;
     }
 }
 
-void buildingConstructible(Building* buildingToBuild, BuildingList buildings, TowerList towers, Node* nodes, Game* game, int x, int y, unsigned int WINDOW_WIDTH, unsigned int WINDOW_HEIGHT){
+void buildingConstructible(Building* buildingToBuild, BuildingList buildings, TowerList towers, Node* nodes, Game* game, int x, int y, float GL_VIEW_WIDTH, float GL_VIEW_HEIGHT){
     if(!(constructionIntersection(buildings, towers, buildingToBuild->x, buildingToBuild->y, buildingToBuild->size, buildingToBuild->shape)) 
        && (buildingToBuild->cost <= game->money)
-       && !(doesCircleIntersectsPath(x, y, buildingToBuild->size, nodes, WINDOW_WIDTH, WINDOW_HEIGHT))){
+       && !(doesCircleIntersectsPath(x, y, buildingToBuild->size, nodes, GL_VIEW_WIDTH, GL_VIEW_HEIGHT))){
         buildingToBuild->r = 255; buildingToBuild->g = 255; buildingToBuild->b = 255; buildingToBuild->a = 255;
         buildingToBuild->constructible = 1;
     }else{

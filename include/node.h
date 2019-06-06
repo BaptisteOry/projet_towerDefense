@@ -21,7 +21,7 @@ typedef struct Graph {
 	Link* links;
 } Graph;
 
-int doesCircleIntersectsPath(float x, float y, int size, Node* nodes, unsigned int WINDOW_WIDTH, unsigned int WINDOW_HEIGHT);
+int doesCircleIntersectsPath(float x, float y, int size, Node* nodes, float GL_VIEW_WIDTH, float GL_VIEW_HEIGHT);
 int findStart(Node* nodes);
 int findEnd(Node* nodes);
 Node* idToNode(int id, Node* nodes);

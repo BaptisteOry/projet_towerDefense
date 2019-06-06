@@ -45,135 +45,92 @@ void itdCheck(char* itdFile, ImageMap* map, ItdEltsInfos** infos, Node** nodes, 
  
 	if(file == NULL) {
 		printf("Error while opening .itd file.\n");
-	  	EXIT_FAILURE;
+	  	exit(EXIT_FAILURE);
 	}
 
 	/* FILE CHECK */
 
 	// Itd code check
 	fscanf(file, "%s %d", code, &version);
-	printf("%s %d\n", code, version);
+	//printf("%s %d\n", code, version);
 	if(strcmp(code, "@ITD") != 0) {
 		printf("ERROR : Wrong .itd file format.\n");
-		EXIT_FAILURE;
+		exit(EXIT_FAILURE);
 	}
 	if(version != 1) {
 		printf("Itd version not supported.\n");
-		EXIT_FAILURE;
+		exit(EXIT_FAILURE);
 	}
 
 	// Read comment
 	fscanf(file, "%s", comments);
-	printf("%s\n", comments);
+	//printf("%s\n", comments);
 	if(comments[0] != 35) {
 		printf("Second line isn't comments.\n");
-		EXIT_FAILURE;
+		exit(EXIT_FAILURE);
 	}
 
 	// Read & store variables & values
-	//ItdEltsInfos* infosTemp = infos;
 	int count = 0;
 	while(count<6) {
 		fscanf(file, "%s", keyword);
-		printf("%s ", keyword);
+		//printf("%s ", keyword);
 		if(strcmp(keyword, "carte")==0) {
 			fscanf(file, "%s", ppmFileName);
-			printf("%s\n", ppmFileName);
+			//printf("%s\n", ppmFileName);
 		}
 		else if(strcmp(keyword, "chemin")==0 || strcmp(keyword, "noeud")==0 || strcmp(keyword, "construct")==0 || strcmp(keyword, "in")==0 || strcmp(keyword, "out")==0){
 			fscanf(file, "%d %d %d", &valueR, &valueG, &valueB);
-			//strcpy(infosTemp->keyword, keyword);
-			/*if(testPixel(valueR)==0) {
-				infosTemp->r=valueR;
-			}
-			if(testPixel(valueG)==0) {
-				infosTemp->g=valueG;
-			}
-			if(testPixel(valueB)==0) {
-				infosTemp->b=valueB;
-			}*/
 			if (testPixel(valueR)!=0 || testPixel(valueG)!=0 || testPixel(valueB)!=0) {
 				printf("ERROR : Wrong pixel value(s).\n");
-				EXIT_FAILURE;
+				exit(EXIT_FAILURE);
 			}
 			ItdEltsInfos* infoTemp = allocInfo(keyword, valueR, valueG, valueB);
-			printf("%d %d %d\n", infoTemp->r, infoTemp->g, infoTemp->b);
+			//printf("%d %d %d\n", infoTemp->r, infoTemp->g, infoTemp->b);
 			addInfo(infoTemp, infos);
-			/*infosTemp->nextKeyword = malloc(sizeof(infosTemp));
-			infosTemp=infosTemp->nextKeyword;*/
 		}
 		else {
 			printf("ERROR : Keyword not valid.\n");
-			EXIT_FAILURE;
+			exit(EXIT_FAILURE);
 		}
 		count++;
 	}
-	//infosTemp = NULL;
 
 	// Read & store nodes description
 	fscanf(file, "%d", &nodesNumber);
-	printf("%d\n", nodesNumber);
+	//printf("%d\n", nodesNumber);
 	*nbOfNodes = nodesNumber;
 	int nodesCount = 0;
-	//graph->nodes = malloc(sizeof(Node));
-	//if(graph->nodes == NULL) {
-	//	printf("ERROR: bad allocation nodes in graph.\n");
-	//	EXIT_FAILURE;
-	//}
-	//graph->links = malloc(sizeof(Link));
-	//if(graph->links == NULL) {
-	//	printf("ERROR : bad allocation links in graph.\n");
-	//}
-	//Node* nodes = graph->nodes;
-	//Link* links = graph->links;
 
 	fgets(buf, sizeof(buf), file);
 	while(fgets(buf, sizeof(buf), file) != NULL) {
 	    buf[strlen(buf) - 1] = '\0'; // eat the newline fgets() stores
 
-	    //printf("%s\n", buf); // buf[i] is a character, and counts spaces
 	    sscanf(buf, "%d %d %d %d", &nodeId, &nodeType, &nodeX, &nodeY);
-	    printf("%d %d %d %d ", nodeId, nodeType, nodeX, nodeY);
-	    //sscanf(buf, "%d %d %d %d", &nodes->id, &nodes->type, &nodes->x, &nodes->y);
-	    //printf("%d %d %d %d ", nodes->id, nodes->type, nodes->x, nodes->y);
+	    //printf("%d %d %d %d ", nodeId, nodeType, nodeX, nodeY);
 	    char slicedBuf[strlen(buf)+1];
 	    slice_str(buf, slicedBuf, 7, strlen(buf)-1);
 	    int i=2;
-	    //printf("%s\n", slicedBuf);
 	    while(strlen(slicedBuf)>1) {
 	    	sscanf(slicedBuf, "%d", &nodeLink);
-	    	printf("%d ", nodeLink);
+	    	//printf("%d ", nodeLink);
 	    	slice_str(buf, slicedBuf, 7+i, strlen(buf)-1);
 	    	i=i+2;
 	    	Link* linkTemp = allocLink(nodeId, nodeLink);
 	    	addLink(linkTemp, links);
-	    	//links->nodeId1 = nodes->id;
-			//links->nodeId2 = nodeLink;
-			//links->nextLink = malloc(sizeof(Link));
-			//links = links->nextLink;
 	    }
-	    printf("\n");
-	    //nodes->id = nodeId;
-	    //nodes->type = nodeType;
-	    //nodes->x = nodeX;
-	    //nodes->y = nodeY;
+	    //printf("\n");
 	    Node* nodeTemp = allocNode(nodeId, nodeType, nodeX, nodeY);
 	    addNode(nodeTemp, nodes);
-	    //nodes->nextNode = malloc(sizeof(Node));
-	    //nodes = nodes->nextNode;
+
 	    nodesCount++;
 	}
-	//links = NULL;
-	//nodes = NULL;
-	printf("%d\n", nodesCount);
+	//printf("%d\n", nodesCount);
 
 	if(nodesCount != nodesNumber) {
 		printf("ERROR : Number of nodes doesn't match nodeNumber.\n");
-		EXIT_FAILURE;
+		exit(EXIT_FAILURE);
 	}
-
-	/* PPM MAP CHECK */
-	//mapCheck(map, infos, nodes);
  
  	// Close .itd file
 	fclose(file);
@@ -189,26 +146,26 @@ void mapCheck(ImageMap* map, ItdEltsInfos* infos, Node* nodes) {
 			while(strcmp(tempInfo->keyword, "in")!=0) {
 				tempInfo=tempInfo->nextKeyword;
 			}
-			printf("%s %d %d %d\n", tempInfo->keyword, tempInfo->r, tempInfo->g, tempInfo->b);
+			//printf("%s %d %d %d\n", tempInfo->keyword, tempInfo->r, tempInfo->g, tempInfo->b);
 			testNodeOnMap(tempInfo->r, tempInfo->g, tempInfo->b, tempNode, map);
 		}
 		else if(tempNode->type == 2) {
 			while(strcmp(tempInfo->keyword, "out")!=0) {
 				tempInfo=tempInfo->nextKeyword;
 			}
-			printf("%s %d %d %d\n", tempInfo->keyword, tempInfo->r, tempInfo->g, tempInfo->b);
+			//printf("%s %d %d %d\n", tempInfo->keyword, tempInfo->r, tempInfo->g, tempInfo->b);
 			testNodeOnMap(tempInfo->r, tempInfo->g, tempInfo->b, tempNode, map);
 		}
 		else if(tempNode->type == 3 || tempNode->type == 4) {
 			while(strcmp(tempInfo->keyword, "noeud")!=0) {
 				tempInfo=tempInfo->nextKeyword;
 			}
-			printf("%s %d %d %d\n", tempInfo->keyword, tempInfo->r, tempInfo->g, tempInfo->b);
+			//printf("%s %d %d %d\n", tempInfo->keyword, tempInfo->r, tempInfo->g, tempInfo->b);
 			testNodeOnMap(tempInfo->r, tempInfo->g, tempInfo->b, tempNode, map);
 		}
 		else {
 			printf("Error in node, impossible to test color.\n");
-			EXIT_FAILURE;
+			exit(EXIT_FAILURE);
 		}
 		tempNode=tempNode->nextNode;
 	}
@@ -221,7 +178,7 @@ void mapCheck(ImageMap* map, ItdEltsInfos* infos, Node* nodes) {
 	int r = tempInfo->r;
 	int g = tempInfo->g;
 	int b = tempInfo->b;
-	printf("test construct %d %d %d\n", r, g, b);
+	//printf("test construct %d %d %d\n", r, g, b);
 	tempInfo = infos;
 
 	while(strcmp(tempInfo->keyword, "chemin")!=0) {
@@ -230,7 +187,7 @@ void mapCheck(ImageMap* map, ItdEltsInfos* infos, Node* nodes) {
 	int pathR = tempInfo->r;
 	int pathG = tempInfo->g;
 	int pathB = tempInfo->b;
-	printf("test chemmin %d %d %d\n", pathR, pathG, pathB);
+	//printf("test chemmin %d %d %d\n", pathR, pathG, pathB);
 
 	for(int i = 0; i<(map->height)*(map->width)*3; i=i+3) {
 		int R = map->data[i];
@@ -240,20 +197,18 @@ void mapCheck(ImageMap* map, ItdEltsInfos* infos, Node* nodes) {
 			if((R == pathR) && (G == pathG) && (B == pathB)) {
 				if(testIfPath(i, nodes, map)==1) {
 					printf("ERROR : Pixel should be on a path.\n");
-					EXIT_FAILURE;
+					exit(EXIT_FAILURE);
 				}
 			}
 			else {
-				//tester si noeud (= si le x et le y correspondent a un noeud dans la liste) sinon erreur
 				if(testIfNode(i, nodes, map)==1) {
 					printf("ERROR : Pixel color doesn't match anything.\n");
-					EXIT_FAILURE;
+					exit(EXIT_FAILURE);
 				}
-				//printf("%d : %d, %d : %d, %d : %d\n", i, R, i+1, G, i+2, B);
 			}
 		}
 		else {
-			printf("This pixel is on a construction zone, where it should be <3.\n");
+			//printf("This pixel is on a construction zone, where it should be <3.\n");
 		}
 	}
 
@@ -263,31 +218,25 @@ void mapCheck(ImageMap* map, ItdEltsInfos* infos, Node* nodes) {
 void testNodeOnMap(int r, int g, int b, Node* node, ImageMap* map) {
 	int x = node->x;
 	int y = node->y;
-	//printf("%d, %d\n", x, y);
-	//printf("%d\n", y*map->width*3 + x*3);
-	printf("%d %d %d\n", (map->data)[y*map->width*3 + x*3], (map->data)[y*map->width*3 + x*3+1], (map->data)[y*map->width*3 + x*3+2]);
 	if((map->data)[y*map->width*3 + x*3] != r || (map->data)[y*map->width*3 + x*3 +1] != g || (map->data)[y*map->width*3 + x*3 +2] != b) {
 		printf("ERROR : %d node not in right place.\n", node->id);
-		EXIT_FAILURE;
+		exit(EXIT_FAILURE);
 	}
-	printf("Pixel in right place.\n");
+	//printf("Pixel in right place.\n");
 }
 
 int testIfPath(int dataIndex, Node* nodes, ImageMap* map) {
 	// Check if dataIndex is between two nodes
 	int x = dataIndex%(map->width*3)/3;
 	int y = dataIndex/(map->width*3);
-	//printf("x : %d, y : %d\n", x, y);
 	Node* tempNode = nodes;
 	while(tempNode != NULL) {
 		if(tempNode->x == x) {
-			//printf("test X\n");
 			Node* linkedNode = tempNode->linkedNodes;
 			while(linkedNode != NULL) {
 				if(linkedNode->x == x) {
-					//printf("oui\n");
 					if((tempNode->y < y && linkedNode->y > y) || (tempNode->y > y && linkedNode->y < y)) {
-						printf("This pixel is a on a path.\n");
+						//printf("This pixel is a on a path.\n");
 						return 0;
 					}
 				}
@@ -295,13 +244,11 @@ int testIfPath(int dataIndex, Node* nodes, ImageMap* map) {
 			}
 		}
 		if(tempNode->y == y) {
-			//printf("test Y\n");
 			Node* linkedNode = tempNode->linkedNodes;
 			while(linkedNode != NULL) {
 				if(linkedNode->y == y) {
-					//printf("euh oui\n");
 					if((tempNode->x < x && linkedNode->x > x) || (tempNode->x > x && linkedNode->x < x)) {
-						printf("This pixel is a on a path.\n");
+						//printf("This pixel is a on a path.\n");
 						return 0;
 					}
 				}
@@ -320,7 +267,7 @@ int testIfNode(int dataIndex, Node* nodes, ImageMap* map) {
 	Node* tempNode = nodes;
 	while(tempNode != NULL) {
 		if(tempNode->x == x && tempNode->y == y) {
-			printf("This pixel is a node.\n");
+			//printf("This pixel is a node.\n");
 			return 0;
 		}
 		tempNode = tempNode->nextNode;
@@ -405,25 +352,18 @@ void addLink(Link* link, LinkList* list){
 }
 
 void createLinkedNodeList(Node* nodes, Link* links) {
-	//printf("createLinkedNodeList\n");
 	Node* tempNode = nodes;
 	Link* tempLink = links;
 	while(tempNode != NULL) {
-		//printf("node %d\n", tempNode->id);
 		while(tempLink != NULL && (tempLink->nodeId1 == tempNode->id)) {
-			//printf("links list %d %d\n", tempLink->nodeId1, tempLink->nodeId2);
-			//printf("oui\n");
 			Node* temp = nodes;
 			while((temp != NULL) && (temp->id != tempLink->nodeId2)) {
 				temp = temp->nextNode;
 			}
-			//printf("node linked %d\n", temp->id);
 			Node* node = allocNode(temp->id, temp->type, temp->x, temp->y);
-			//printf("test node %d %d %d %d\n", node->id, node->type, node->x, node->y);
 			addNode(node, &(tempNode->linkedNodes));
 			tempLink=tempLink->nextLink;
 		}
-		//printf("non\n");
 		tempNode = tempNode->nextNode;
 	}
 }
