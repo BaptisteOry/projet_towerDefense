@@ -45,7 +45,7 @@ void goLeft(Monster* m);
 void goRight(Monster* m);
 direction directionAB(Node* A, Node* B);
 Monster* moveMonsterAB(Monster* m, Node* nodes, float GL_VIEW_WIDTH, float GL_VIEW_HEIGHT);
-void initializeMonsterPath(Monster* m, Node* nodes, int nbOfNodes);
+void initializeMonsterPath(Monster* m, Node* nodes);
 void initializeMonsterPosition(Monster* m, float GL_VIEW_WIDTH, float GL_VIEW_HEIGHT);
 void moveMonsters(MonsterList* monsters, Node* nodes, float GL_VIEW_WIDTH, float GL_VIEW_HEIGHT);
 int passNodeCenter(Monster* m, Node* n, float GL_VIEW_WIDTH, float GL_VIEW_HEIGHT);

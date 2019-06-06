@@ -151,9 +151,11 @@ int main(int argc, char** argv){
         } else if(game->status == 1){
             counter += 100;
             // Création de vagues de monstres
-            addWave(game, &monsters, counter);
+            addWave(game, &monsters, counter, nodes, GL_VIEW_WIDTH, GL_VIEW_HEIGHT);
             // Destruction monstres
             killMonsters(&monsters, &towers, counter);
+            // Déplacement de la vague de monstre;
+            moveMonsters(&monsters, nodes, GL_VIEW_WIDTH, GL_VIEW_HEIGHT);
         } else if(game->status == 2){
             drawHelp(interface);
         } else if(game->status == 3){
@@ -169,14 +171,6 @@ int main(int argc, char** argv){
 
         // Échange du front et du back buffer : mise à jour de la fenêtre
         SDL_GL_SwapBuffers();
-
-        /* Évènements jeu */
-        // Création de vagues de monstres
-        addWave(game, &monsters, counter, nodes, nbOfNodes, GL_VIEW_WIDTH, GL_VIEW_HEIGHT);
-        // Déplacement de la vague de monstre;
-        moveMonsters(&monsters, nodes, GL_VIEW_WIDTH, GL_VIEW_HEIGHT);
-        // Destruction monstres
-        killMonsters(&monsters, &towers, counter);
         
         /* Évènements joueur */
         SDL_Event e;

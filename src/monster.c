@@ -215,10 +215,10 @@ Monster* moveMonsterAB(Monster* m, Node* nodes, float GL_VIEW_WIDTH, float GL_VI
 	return NULL;
 }
 
-void initializeMonsterPath(Monster* m, Node* nodes, int nbOfNodes) {
+void initializeMonsterPath(Monster* m, Node* nodes) {
 	int r = rand()%2;
 	if(r == 1) {
-		m->path = dijkstra(nodes, nbOfNodes);
+		m->path = dijkstra(nodes);
 	}
 	else {
 		m->path = randomPath(nodes);

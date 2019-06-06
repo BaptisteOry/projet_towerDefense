@@ -77,7 +77,7 @@ int randomRange(int min, int max){
     return rand()%(max-min+1) + min;
 }
 
-Node* dijkstra(Node* nodes, int nbOfNodes) {
+Node* dijkstra(Node* nodes) {
     Node* temp = nodes;
     int start = findStart(nodes);
     int end = findEnd(nodes);
@@ -86,11 +86,13 @@ Node* dijkstra(Node* nodes, int nbOfNodes) {
     int previous[MAX_NODES];
 
     // Initialisation distances & previous
+    int nbOfNodes = 0;
     while(temp != NULL) {
         distances[temp->id][0] = -1;
         distances[temp->id][1] = 0;
         previous[temp->id] = -1;
         temp = temp->nextNode;
+        nbOfNodes++;
     }
     //printf("Tu peux le faire <3\n");
     distances[start][0] = 0;

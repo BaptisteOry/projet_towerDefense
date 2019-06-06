@@ -14,7 +14,7 @@ typedef struct Game{
 
 Game* allocGame();
 void freeGame(Game* g);
-void addWave(Game* g, MonsterList* list, int counter, Node* nodes, int nbOfNodes, float GL_VIEW_WIDTH, float GL_VIEW_HEIGHT);
+void addWave(Game* g, MonsterList* list, int counter, Node* nodes, float GL_VIEW_WIDTH, float GL_VIEW_HEIGHT);
 void killMonsters(MonsterList* listMonsters, TowerList* listTowers, int counter);
 
 #endif
