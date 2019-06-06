@@ -97,9 +97,8 @@ int main(int argc, char** argv){
     ItdEltsInfos* infos = NULL;
     Node* nodes = NULL;
     Link* links = NULL;
-    int nbOfNodes = 0;
     //printMapData(&imageMap);
-    itdCheck(itdFile, &imageMap, &infos, &nodes, &links, &nbOfNodes);
+    itdCheck(itdFile, &imageMap, &infos, &nodes, &links);
 
     
     createLinkedNodeList(nodes, links);
@@ -149,15 +148,11 @@ int main(int argc, char** argv){
         if(game->status == 0){
             drawBeginning(interface);
         } else if(game->status == 1){
+            counter += 100;
             // Création de vagues de monstres
-            addWave(game, &monsters, counter, nodes, GL_VIEW_WIDTH, GL_VIEW_HEIGHT);
+            addWave(game, &monsters, counter);
             // Destruction monstres
             killMonsters(&monsters, &towers, counter);
-            // Déplacement de la vague de monstre;
-            moveMonsters(&monsters, nodes, GL_VIEW_WIDTH, GL_VIEW_HEIGHT);
-            // Fin du jeu
-            endGame(game, &monsters);
-            counter += 100;
         } else if(game->status == 2){
             drawHelp(interface);
         } else if(game->status == 3){

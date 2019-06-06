@@ -116,7 +116,7 @@ void drawGameElements(Interface* f, Game* g){
             glScalef(f->wInfosGame, f->hInfosGame, 0);
             drawSquare(f->r, f->g, f->b, f->a);
         glPopMatrix();
-        sprintf(bufferText, "Argent : %d\nVague : %d/10\n>Touche \"H\" pour l'aide", g->money, g->nbWave);
+        sprintf(bufferText, "Argent : %d\nVague : %d/%d\n>Touche \"H\" pour l'aide", g->money, g->nbWave, g->lastWave);
         displayText(f->font, (unsigned char*)bufferText, -(f->wInfosGame)+(f->xText), (f->hInfosGame)+(f->yText), 255, 255, 255);
     glPopMatrix();
 }
