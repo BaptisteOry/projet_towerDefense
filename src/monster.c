@@ -199,15 +199,29 @@ Monster* moveMonsterAB(Monster* m, Node* nodes, float GL_VIEW_WIDTH, float GL_VI
 		return m;
 	}
 	Node* A = testOnNodeAB(m, nodes, GL_VIEW_WIDTH, GL_VIEW_HEIGHT);
+	float x = (2*GL_VIEW_WIDTH)*(m->path->x)/10 - GL_VIEW_WIDTH + (GL_VIEW_WIDTH/10);
+	float y = GL_VIEW_HEIGHT - (2*GL_VIEW_HEIGHT)*(m->path->y)/6 - (GL_VIEW_HEIGHT/6);
 
 	switch(m->direction) {
 		case UP : goUp(m);
+			if(m->x != x) {
+				m->x = x;
+			}
 			break;
 		case DOWN : goDown(m);
+			if(m->x != x) {
+				m->x = x;
+			}
 			break;
 		case LEFT : goLeft(m);
+			if(m->y != y) {
+				m->y = y;
+			}
 			break;
 		case RIGHT : goRight(m);
+			if(m->y != y) {
+				m->y = y;
+			}
 			break;
 		case NONE : m->direction = directionAB(A, m->path);
 			break;
@@ -276,6 +290,7 @@ int passNodeCenter(Monster* m, Node* n, float GL_VIEW_WIDTH, float GL_VIEW_HEIGH
 			}
 			break;
 		case NONE :
+			m->direction = directionAB(m->path, m->path->nextNode);
 			break;
 	}
 	return 1;
